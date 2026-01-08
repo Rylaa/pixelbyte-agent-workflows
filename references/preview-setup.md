@@ -155,21 +155,43 @@ const components: Record<string, React.ComponentType<any>> = {
 
 ## Doğrulama Çalıştırma
 
-```bash
-# 1. Dev server'ı başlat
-npm run dev
+### 1. Dev Server Başlat
 
-# 2. Başka terminalde doğrulama scriptini çalıştır
-node .claude/skills/figma-to-code/scripts/validate-visual.js \
-  --component=HeroCard \
-  --reference=.claude/tmp/reference.png
+```bash
+npm run dev
 ```
+
+### 2. Playwright MCP ile Screenshot Al
+
+```javascript
+// 1. Preview sayfasına git
+browser_navigate({ url: "http://localhost:3000/test-preview?component=HeroCard" })
+
+// 2. Component yüklenmesini bekle
+browser_evaluate({ script: "new Promise(r => setTimeout(r, 2000))" })
+
+// 3. Screenshot al
+browser_take_screenshot({
+  filename: "rendered.png"
+})
+```
+
+### 3. Claude Vision ile Karşılaştır
+
+İki görseli yan yana koy:
+- `reference.png` - Figma'dan (Phase 1'de `get_screenshot` ile alındı)
+- `rendered.png` - Playwright'tan (az önce alındı)
+
+Claude Vision'a sor:
+- "Bu iki görsel arasındaki farklar neler?"
+- "Hangi CSS değerleri düzeltilmeli?"
 
 ## Çıktılar
 
-Script çalıştıktan sonra `.claude/tmp/` klasöründe:
+Doğrulama sonrası:
+- `reference.png` - Figma tasarım görseli
 - `rendered.png` - Kod output'unun ekran görüntüsü
-- `diff.png` - Farklılıkları gösteren görsel (kırmızı pikseller)
+- Fark varsa → Düzelt ve tekrar test et (max 3 iterasyon)
 
 ## Troubleshooting
 

@@ -6,7 +6,7 @@ Figma-to-code dönüşümünde Storybook, hem dokümantasyon hem de görsel test
 
 Her yeni bileşen için otomatik oluşturulacak Storybook story şablonu:
 
-**Dosya:** `templates/component.stories.tsx.hbs`
+**Dosya:** `assets/templates/component.stories.tsx.hbs`
 
 ```tsx
 import type { Meta, StoryObj } from '@storybook/react';

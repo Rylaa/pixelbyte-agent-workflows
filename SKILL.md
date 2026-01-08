@@ -268,11 +268,12 @@ Upon receiving a Figma selection or URL:
 │    → HAYIR ise: get_screenshot çağır, reference.png al         │
 │                                                                  │
 │  □ Playwright MCP konfigüre mi?                                 │
-│    → Test: browser_navigate({ url: "about:blank" })            │
-│    → HAYIR ise: Kullanıcıya "Playwright MCP gerekli" bildir    │
+│    → Test: mcp__plugin_playwright_playwright__browser_navigate  │
+│    → HAYIR ise: Kullanıcıya "Playwright plugin gerekli" bildir │
 │                                                                  │
 │  □ Dev server çalışıyor mu?                                     │
-│    → Test: browser_navigate({ url: "http://localhost:3000" })  │
+│    → Test: mcp__plugin_playwright_playwright__browser_navigate │
+│    →        url: "http://localhost:3000"                        │
 │    → HAYIR ise: "npm run dev çalıştırın" uyarısı ver           │
 │                                                                  │
 │  □ Preview route var mı?                                        │
@@ -290,7 +291,8 @@ Upon receiving a Figma selection or URL:
 ┌─────────────────────────────────────────────────────────────────┐
 │  STEP 1: Dev Server Kontrolü                                   │
 │  ┌───────────────────────────────────────────────────────────┐  │
-│  │ browser_navigate({ url: "http://localhost:3000" })        │  │
+│  │ mcp__plugin_playwright_playwright__browser_navigate       │  │
+│  │   url: "http://localhost:3000"                            │  │
 │  │                                                            │  │
 │  │ ❌ Yüklenmezse → "npm run dev çalıştırın" uyarısı         │  │
 │  │ ✅ Yüklendiyse → Devam                                     │  │
@@ -298,13 +300,11 @@ Upon receiving a Figma selection or URL:
 ├─────────────────────────────────────────────────────────────────┤
 │  STEP 2: Rendered Screenshot Al                                │
 │  ┌───────────────────────────────────────────────────────────┐  │
-│  │ browser_navigate({                                         │  │
+│  │ mcp__plugin_playwright_playwright__browser_navigate       │  │
 │  │   url: "http://localhost:3000/[component-path]"           │  │
-│  │ })                                                         │  │
 │  │                                                            │  │
-│  │ browser_take_screenshot({                                  │  │
-│  │   filename: "rendered.png"                                 │  │
-│  │ })                                                         │  │
+│  │ mcp__plugin_playwright_playwright__browser_take_screenshot│  │
+│  │   filename: "rendered.png"                                │  │
 │  └───────────────────────────────────────────────────────────┘  │
 ├─────────────────────────────────────────────────────────────────┤
 │  STEP 3: Görsel Karşılaştırma (Claude Vision)                  │
@@ -327,14 +327,16 @@ Upon receiving a Figma selection or URL:
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-**Playwright MCP Araçları:**
+**Playwright MCP Araçları (Plugin Format):**
 
 | Araç | Kullanım |
 |------|----------|
-| `browser_navigate` | URL'ye git |
-| `browser_take_screenshot` | Screenshot al |
-| `browser_snapshot` | Accessibility snapshot (opsiyonel) |
-| `browser_evaluate` | JavaScript çalıştır |
+| `mcp__plugin_playwright_playwright__browser_navigate` | URL'ye git |
+| `mcp__plugin_playwright_playwright__browser_take_screenshot` | Screenshot al |
+| `mcp__plugin_playwright_playwright__browser_snapshot` | Accessibility snapshot |
+| `mcp__plugin_playwright_playwright__browser_evaluate` | JavaScript çalıştır |
+
+> **Not:** Playwright, Claude Code plugin olarak yüklüyse araç isimleri `mcp__plugin_playwright_playwright__` prefix'i ile başlar.
 
 **Detailed instructions:** See `references/visual-validation-loop.md`
 

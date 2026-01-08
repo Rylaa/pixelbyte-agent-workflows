@@ -36,8 +36,10 @@ write_file("src/components/[ComponentName].tsx", generatedCode)
 ### Step 4.2: Dev Server Check
 
 ```javascript
-// Using Playwright MCP
-browser_navigate({ url: "http://localhost:3000" })
+// Using Playwright MCP (Plugin Format)
+mcp__plugin_playwright_playwright__browser_navigate({
+  url: "http://localhost:3000"
+})
 
 // If page doesn't load, warn user:
 // "⚠️ Dev server not running. Please run 'npm run dev' and try again."
@@ -47,26 +49,31 @@ browser_navigate({ url: "http://localhost:3000" })
 
 ```javascript
 // 1. Navigate to component page
-browser_navigate({ 
-  url: "http://localhost:3000/test-preview?component=[ComponentName]" 
+mcp__plugin_playwright_playwright__browser_navigate({
+  url: "http://localhost:3000/test-preview?component=[ComponentName]"
 })
 
 // 2. Wait for component to load (2 seconds)
-browser_evaluate({ 
-  script: "new Promise(r => setTimeout(r, 2000))" 
+mcp__plugin_playwright_playwright__browser_evaluate({
+  function: "() => new Promise(r => setTimeout(r, 2000))"
 })
 
 // 3. Take screenshot
-browser_take_screenshot({ 
-  selector: "[data-testid='preview-component']",
-  path: "/tmp/rendered.png"
+mcp__plugin_playwright_playwright__browser_take_screenshot({
+  element: "preview-component",
+  ref: "[data-testid='preview-component']",
+  filename: "rendered.png"
 })
 ```
 
 **Note:** If no preview page exists, use direct URL:
 ```javascript
-browser_navigate({ url: "http://localhost:3000/components/[ComponentName]" })
-browser_take_screenshot({ fullPage: false, path: "/tmp/rendered.png" })
+mcp__plugin_playwright_playwright__browser_navigate({
+  url: "http://localhost:3000/components/[ComponentName]"
+})
+mcp__plugin_playwright_playwright__browser_take_screenshot({
+  filename: "rendered.png"
+})
 ```
 
 ### Step 4.4: Pixel Comparison
@@ -74,16 +81,17 @@ browser_take_screenshot({ fullPage: false, path: "/tmp/rendered.png" })
 **Method: Playwright's built-in visual comparison**
 
 ```javascript
-// Pixel comparison using Playwright MCP
-browser_evaluate({
-  script: `
+// Pixel comparison using Playwright MCP (Plugin Format)
+mcp__plugin_playwright_playwright__browser_evaluate({
+  function: `() => {
     async function compareImages(img1Path, img2Path) {
       const canvas1 = document.createElement('canvas');
       const canvas2 = document.createElement('canvas');
       // ... pixel comparison logic
       return { diffPercent: X.XX, hasDiff: true/false };
     }
-  `
+    return compareImages();
+  }`
 })
 ```
 
@@ -225,41 +233,50 @@ IF iteration >= 3:
     → Note "Manual check required" in report
 ```
 
-## Playwright MCP Command Reference
+## Playwright MCP Command Reference (Plugin Format)
+
+> **Not:** Playwright, Claude Code plugin olarak yüklüyse araç isimleri `mcp__plugin_playwright_playwright__` prefix'i ile başlar.
 
 ```javascript
 // Navigate to page
-browser_navigate({ url: "http://localhost:3000/preview" })
+mcp__plugin_playwright_playwright__browser_navigate({
+  url: "http://localhost:3000/preview"
+})
 
 // Take screenshot (full page)
-browser_take_screenshot({ path: "/tmp/screenshot.png", fullPage: true })
+mcp__plugin_playwright_playwright__browser_take_screenshot({
+  filename: "screenshot.png",
+  fullPage: true
+})
 
 // Take screenshot (specific element)
-browser_take_screenshot({ 
-  selector: "[data-testid='component']",
-  path: "/tmp/component.png" 
+mcp__plugin_playwright_playwright__browser_take_screenshot({
+  element: "component",
+  ref: "[data-testid='component']",
+  filename: "component.png"
 })
 
 // Wait for element
-browser_evaluate({ 
-  script: "document.querySelector('.loaded') !== null" 
+mcp__plugin_playwright_playwright__browser_evaluate({
+  function: "() => document.querySelector('.loaded') !== null"
 })
 
 // Change viewport (responsive test)
-browser_evaluate({
-  script: "document.body.style.width = '375px'"
+mcp__plugin_playwright_playwright__browser_resize({
+  width: 375,
+  height: 812
 })
 
 // Read CSS value (for validation)
-browser_evaluate({
-  script: `
+mcp__plugin_playwright_playwright__browser_evaluate({
+  function: `() => {
     const el = document.querySelector('[data-testid="component"]');
-    JSON.stringify({
+    return JSON.stringify({
       padding: getComputedStyle(el).padding,
       fontSize: getComputedStyle(el).fontSize,
       gap: getComputedStyle(el).gap
-    })
-  `
+    });
+  }`
 })
 ```
 
@@ -267,16 +284,16 @@ browser_evaluate({
 
 ```javascript
 // Mobile (375px)
-browser_evaluate({ script: "document.body.style.width = '375px'" })
-browser_take_screenshot({ path: "/tmp/mobile.png" })
+mcp__plugin_playwright_playwright__browser_resize({ width: 375, height: 812 })
+mcp__plugin_playwright_playwright__browser_take_screenshot({ filename: "mobile.png" })
 
-// Tablet (768px)  
-browser_evaluate({ script: "document.body.style.width = '768px'" })
-browser_take_screenshot({ path: "/tmp/tablet.png" })
+// Tablet (768px)
+mcp__plugin_playwright_playwright__browser_resize({ width: 768, height: 1024 })
+mcp__plugin_playwright_playwright__browser_take_screenshot({ filename: "tablet.png" })
 
 // Desktop (1280px)
-browser_evaluate({ script: "document.body.style.width = '1280px'" })
-browser_take_screenshot({ path: "/tmp/desktop.png" })
+mcp__plugin_playwright_playwright__browser_resize({ width: 1280, height: 800 })
+mcp__plugin_playwright_playwright__browser_take_screenshot({ filename: "desktop.png" })
 
 // Compare each viewport with Claude Vision
 ```

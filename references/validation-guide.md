@@ -13,13 +13,20 @@
 
 ### 3 Seviyeli Doğrulama
 
+⚠️ **ÖNEMLİ: TÜM SEVİYELER ZORUNLUDUR**
+
 ```
-Seviye 1: Görsel İnceleme (her zaman)
+Seviye 1: Görsel İnceleme (HER ZAMAN - hızlı kontrol)
     ↓
-Seviye 2: Checklist Doğrulama (her zaman)
+Seviye 2: Checklist Doğrulama (HER ZAMAN - detaylı kontrol)
     ↓
-Seviye 3: Screenshot Karşılaştırma (kritik tasarımlarda)
+Seviye 3: Screenshot Karşılaştırma (HER ZAMAN ZORUNLU - pixel-perfect)
 ```
+
+⛔ **KRİTİK:** Seviye 1 ve 2 TEK BAŞINA YETERSİZDİR!
+- Seviye 3 (Playwright screenshot) MUTLAKA yapılmalıdır
+- Mental validation veya checklist, pixel-perfect doğruluğu garanti ETMEZ
+- Playwright MCP yoksa → Kullanıcıya bildir, manuel screenshot karşılaştırması iste
 
 ## Seviye 1: Görsel İnceleme
 

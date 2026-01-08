@@ -248,9 +248,41 @@ Upon receiving a Figma selection or URL:
    - Mobile-first approach: base → `sm:` → `md:` → `lg:`
    - Single size in design: Add reasonable responsive behavior
 
-### Phase 4: Visual Validation (Automatic)
+### Phase 4: Visual Validation (ZORUNLU - ASLA ATLAMA)
 
 **Hybrid approach: Playwright (pixel comparison) + Claude Vision (semantic analysis)**
+
+⛔ **NEVER SKIP VALIDATION - KRİTİK KURALLAR:**
+- Phase 4 ZORUNLUDUR - ASLA atlanmaz
+- Phase 5'e geçmeden ÖNCE Phase 4 tamamlanmalıdır
+- Playwright MCP kullanılamıyorsa → Kullanıcıya bildir, manuel validation iste
+- Bu phase atlandıysa → Phase 5'te "❌ Validation atlandı" notu düşülmeli
+- Mental/checklist validation YETERSİZDİR - Playwright screenshot ZORUNLU
+
+**PREREQUISITES CHECK (Phase 4 öncesi):**
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  PHASE 4 BAŞLAMADAN ÖNCE KONTROL ET:                           │
+├─────────────────────────────────────────────────────────────────┤
+│  □ Phase 1'de get_screenshot çağrıldı mı?                      │
+│    → HAYIR ise: get_screenshot çağır, reference.png al         │
+│                                                                  │
+│  □ Playwright MCP konfigüre mi?                                 │
+│    → Test: browser_navigate({ url: "about:blank" })            │
+│    → HAYIR ise: Kullanıcıya "Playwright MCP gerekli" bildir    │
+│                                                                  │
+│  □ Dev server çalışıyor mu?                                     │
+│    → Test: browser_navigate({ url: "http://localhost:3000" })  │
+│    → HAYIR ise: "npm run dev çalıştırın" uyarısı ver           │
+│                                                                  │
+│  □ Preview route var mı?                                        │
+│    → Kontrol: /test-preview sayfası mevcut mu?                 │
+│    → HAYIR ise: preview-setup.md'ye yönlendir                  │
+│                                                                  │
+│  ❌ Herhangi biri HAYIR → Kullanıcıyı bilgilendir, bekle       │
+│  ✅ Hepsi EVET → Aşağıdaki adımlara devam et                   │
+└─────────────────────────────────────────────────────────────────┘
+```
 
 **ZORUNLU ADIMLAR:**
 
@@ -307,6 +339,25 @@ Upon receiving a Figma selection or URL:
 **Detailed instructions:** See `references/visual-validation-loop.md`
 
 ### Phase 5: Handoff
+
+⚠️ **VALIDATION GATE - BU KONTROLÜ ASLA ATLAMA:**
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  PHASE 5'E GEÇMEDEN ÖNCE:                                       │
+├─────────────────────────────────────────────────────────────────┤
+│  Phase 4 tamamlandı mı?                                         │
+│  ├── ✅ EVET → Devam et                                         │
+│  └── ❌ HAYIR → DUR! Phase 4'e dön, ASLA Phase 5'e geçme       │
+│                                                                  │
+│  Validation sonucu ne?                                          │
+│  ├── ✅ %98+ match → "Accuracy: X%" yaz, devam                  │
+│  ├── ⚠️ %85-97 match → "Manual check required" notu ekle        │
+│  └── ❌ <%85 match → Kullanıcıya bildir, onay al                │
+│                                                                  │
+│  Phase 4 atlandıysa handoff'a şu notu ekle:                     │
+│  "❌ Validation atlandı - Manuel kontrol gerekli"               │
+└─────────────────────────────────────────────────────────────────┘
+```
 
 **Final output format:**
 

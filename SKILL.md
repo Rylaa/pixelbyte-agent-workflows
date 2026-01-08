@@ -300,11 +300,28 @@ Upon receiving a Figma selection or URL:
 ├─────────────────────────────────────────────────────────────────┤
 │  STEP 2: Rendered Screenshot Al                                │
 │  ┌───────────────────────────────────────────────────────────┐  │
+│  │ 1. Navigate:                                               │  │
 │  │ mcp__plugin_playwright_playwright__browser_navigate       │  │
 │  │   url: "http://localhost:3000/[component-path]"           │  │
 │  │                                                            │  │
+│  │ 2. Scroll element into view (TAM GÖRÜNÜR OLSUN):          │  │
+│  │ mcp__plugin_playwright_playwright__browser_evaluate       │  │
+│  │   function: "() => {                                       │  │
+│  │     const el = document.querySelector('[data-testid]');   │  │
+│  │     if (el) el.scrollIntoView({                           │  │
+│  │       behavior: 'instant', block: 'center'                │  │
+│  │     });                                                    │  │
+│  │   }"                                                       │  │
+│  │                                                            │  │
+│  │ 3. Wait for scroll + render:                              │  │
+│  │ mcp__plugin_playwright_playwright__browser_evaluate       │  │
+│  │   function: "() => new Promise(r => setTimeout(r, 500))"  │  │
+│  │                                                            │  │
+│  │ 4. Take screenshot:                                        │  │
 │  │ mcp__plugin_playwright_playwright__browser_take_screenshot│  │
 │  │   filename: "rendered.png"                                │  │
+│  │                                                            │  │
+│  │ ⚠️ Element yarım görünüyorsa: fullPage: true kullan       │  │
 │  └───────────────────────────────────────────────────────────┘  │
 ├─────────────────────────────────────────────────────────────────┤
 │  STEP 3: Görsel Karşılaştırma (Claude Vision)                  │

@@ -252,17 +252,57 @@ Upon receiving a Figma selection or URL:
 
 **Hybrid approach: Playwright (pixel comparison) + Claude Vision (semantic analysis)**
 
-This phase uses iterative validation with maximum 3 iterations.
+**ZORUNLU ADIMLAR:**
 
-**Quick reference:**
-1. Save generated code
-2. Navigate to preview URL via Playwright
-3. Take screenshot of rendered component
-4. Compare with Figma reference image (from `get_screenshot`)
-5. If diff < 2%: Success → Phase 5
-6. If diff 2-5%: Auto-fix and retry
-7. If diff > 5%: Claude Vision analysis → fix → retry
-8. After 3 iterations: Phase 5 with "manual check required" note
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  STEP 1: Dev Server Kontrolü                                   │
+│  ┌───────────────────────────────────────────────────────────┐  │
+│  │ browser_navigate({ url: "http://localhost:3000" })        │  │
+│  │                                                            │  │
+│  │ ❌ Yüklenmezse → "npm run dev çalıştırın" uyarısı         │  │
+│  │ ✅ Yüklendiyse → Devam                                     │  │
+│  └───────────────────────────────────────────────────────────┘  │
+├─────────────────────────────────────────────────────────────────┤
+│  STEP 2: Rendered Screenshot Al                                │
+│  ┌───────────────────────────────────────────────────────────┐  │
+│  │ browser_navigate({                                         │  │
+│  │   url: "http://localhost:3000/[component-path]"           │  │
+│  │ })                                                         │  │
+│  │                                                            │  │
+│  │ browser_take_screenshot({                                  │  │
+│  │   filename: "rendered.png"                                 │  │
+│  │ })                                                         │  │
+│  └───────────────────────────────────────────────────────────┘  │
+├─────────────────────────────────────────────────────────────────┤
+│  STEP 3: Görsel Karşılaştırma (Claude Vision)                  │
+│  ┌───────────────────────────────────────────────────────────┐  │
+│  │ İki görseli yan yana koy:                                  │  │
+│  │ - reference.png (Figma'dan - Phase 1'de alındı)           │  │
+│  │ - rendered.png (Playwright'tan - az önce alındı)          │  │
+│  │                                                            │  │
+│  │ Claude Vision analizi:                                     │  │
+│  │ "Bu iki görsel arasındaki farklar neler?"                 │  │
+│  │ "Hangi CSS değerleri düzeltilmeli?"                       │  │
+│  └───────────────────────────────────────────────────────────┘  │
+├─────────────────────────────────────────────────────────────────┤
+│  STEP 4: Karar                                                  │
+│  ┌───────────────────────────────────────────────────────────┐  │
+│  │ Fark yok veya minimal → ✅ Phase 5'e geç                  │  │
+│  │ Fark var → Düzelt → Step 2'ye dön (max 3 iterasyon)       │  │
+│  │ 3 iterasyon sonra hala fark → Phase 5 + "manuel kontrol"  │  │
+│  └───────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Playwright MCP Araçları:**
+
+| Araç | Kullanım |
+|------|----------|
+| `browser_navigate` | URL'ye git |
+| `browser_take_screenshot` | Screenshot al |
+| `browser_snapshot` | Accessibility snapshot (opsiyonel) |
+| `browser_evaluate` | JavaScript çalıştır |
 
 **Detailed instructions:** See `references/visual-validation-loop.md`
 

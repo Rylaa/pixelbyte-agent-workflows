@@ -37,7 +37,7 @@ write_file("src/components/[ComponentName].tsx", generatedCode)
 
 ```javascript
 // Using Playwright MCP
-playwright_navigate({ url: "http://localhost:3000" })
+browser_navigate({ url: "http://localhost:3000" })
 
 // If page doesn't load, warn user:
 // "⚠️ Dev server not running. Please run 'npm run dev' and try again."
@@ -47,17 +47,17 @@ playwright_navigate({ url: "http://localhost:3000" })
 
 ```javascript
 // 1. Navigate to component page
-playwright_navigate({ 
+browser_navigate({ 
   url: "http://localhost:3000/test-preview?component=[ComponentName]" 
 })
 
 // 2. Wait for component to load (2 seconds)
-playwright_evaluate({ 
+browser_evaluate({ 
   script: "new Promise(r => setTimeout(r, 2000))" 
 })
 
 // 3. Take screenshot
-playwright_screenshot({ 
+browser_take_screenshot({ 
   selector: "[data-testid='preview-component']",
   path: "/tmp/rendered.png"
 })
@@ -65,8 +65,8 @@ playwright_screenshot({
 
 **Note:** If no preview page exists, use direct URL:
 ```javascript
-playwright_navigate({ url: "http://localhost:3000/components/[ComponentName]" })
-playwright_screenshot({ fullPage: false, path: "/tmp/rendered.png" })
+browser_navigate({ url: "http://localhost:3000/components/[ComponentName]" })
+browser_take_screenshot({ fullPage: false, path: "/tmp/rendered.png" })
 ```
 
 ### Step 4.4: Pixel Comparison
@@ -75,7 +75,7 @@ playwright_screenshot({ fullPage: false, path: "/tmp/rendered.png" })
 
 ```javascript
 // Pixel comparison using Playwright MCP
-playwright_evaluate({
+browser_evaluate({
   script: `
     async function compareImages(img1Path, img2Path) {
       const canvas1 = document.createElement('canvas');
@@ -229,29 +229,29 @@ IF iteration >= 3:
 
 ```javascript
 // Navigate to page
-playwright_navigate({ url: "http://localhost:3000/preview" })
+browser_navigate({ url: "http://localhost:3000/preview" })
 
 // Take screenshot (full page)
-playwright_screenshot({ path: "/tmp/screenshot.png", fullPage: true })
+browser_take_screenshot({ path: "/tmp/screenshot.png", fullPage: true })
 
 // Take screenshot (specific element)
-playwright_screenshot({ 
+browser_take_screenshot({ 
   selector: "[data-testid='component']",
   path: "/tmp/component.png" 
 })
 
 // Wait for element
-playwright_evaluate({ 
+browser_evaluate({ 
   script: "document.querySelector('.loaded') !== null" 
 })
 
 // Change viewport (responsive test)
-playwright_evaluate({
+browser_evaluate({
   script: "document.body.style.width = '375px'"
 })
 
 // Read CSS value (for validation)
-playwright_evaluate({
+browser_evaluate({
   script: `
     const el = document.querySelector('[data-testid="component"]');
     JSON.stringify({
@@ -267,16 +267,16 @@ playwright_evaluate({
 
 ```javascript
 // Mobile (375px)
-playwright_evaluate({ script: "document.body.style.width = '375px'" })
-playwright_screenshot({ path: "/tmp/mobile.png" })
+browser_evaluate({ script: "document.body.style.width = '375px'" })
+browser_take_screenshot({ path: "/tmp/mobile.png" })
 
 // Tablet (768px)  
-playwright_evaluate({ script: "document.body.style.width = '768px'" })
-playwright_screenshot({ path: "/tmp/tablet.png" })
+browser_evaluate({ script: "document.body.style.width = '768px'" })
+browser_take_screenshot({ path: "/tmp/tablet.png" })
 
 // Desktop (1280px)
-playwright_evaluate({ script: "document.body.style.width = '1280px'" })
-playwright_screenshot({ path: "/tmp/desktop.png" })
+browser_evaluate({ script: "document.body.style.width = '1280px'" })
+browser_take_screenshot({ path: "/tmp/desktop.png" })
 
 // Compare each viewport with Claude Vision
 ```

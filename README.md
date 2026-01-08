@@ -1,39 +1,39 @@
 # Figma-to-Code Skill
 
-Pixel-perfect Figma tasarım dönüşümü için Claude Code skill'i. Resmi Figma MCP Server (Local Desktop) kullanarak Figma tasarımlarını React/Next.js/Tailwind koduna dönüştürür.
+A Claude Code skill for pixel-perfect Figma design conversion. Converts Figma designs to React/Next.js/Tailwind code using the official Figma MCP Server (Local Desktop).
 
 ![Figma to Code](https://img.shields.io/badge/Figma-to-Code-blue?style=flat-square&logo=figma)
 ![Claude Code](https://img.shields.io/badge/Claude-Code-orange?style=flat-square)
 ![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react)
 ![Tailwind](https://img.shields.io/badge/Tailwind-v4-38B2AC?style=flat-square&logo=tailwindcss)
 
-## ✨ Özellikler
+## ✨ Features
 
-- 🎨 **Pixel-Perfect Dönüşüm** - %85+ doğruluk hedefi
-- 🔗 **Code Connect Desteği** - Mevcut component'larla otomatik eşleştirme
-- 🎯 **Design Token Çıkarma** - Colors, spacing, typography
-- 🖼️ **Görsel Doğrulama** - Playwright MCP ile hibrit validation
-- 📱 **Responsive Kod** - Mobile-first yaklaşım
-- ♿ **WCAG 2.1 AA** - Erişilebilirlik standartları
+- 🎨 **Pixel-Perfect Conversion** - 85%+ accuracy target
+- 🔗 **Code Connect Support** - Automatic mapping with existing components
+- 🎯 **Design Token Extraction** - Colors, spacing, typography
+- 🖼️ **Visual Validation** - Hybrid validation with Playwright MCP
+- 📱 **Responsive Code** - Mobile-first approach
+- ♿ **WCAG 2.1 AA** - Accessibility compliance
 
-## 📋 Gereksinimler
+## 📋 Requirements
 
-- **Figma Desktop App** (güncel versiyon)
+- **Figma Desktop App** (latest version)
 - **Claude Code** with MCP support
 - **Figma MCP Plugin** (figma-desktop)
-- **Playwright MCP** (görsel doğrulama için)
+- **Playwright MCP** (for visual validation)
 - **Node.js** >= 18
 
-## 🚀 Kurulum
+## 🚀 Installation
 
 ### 1. Figma Desktop MCP Server
 
-Figma Desktop App'te:
-1. Dev Mode'u aktif et (`Shift+D`)
-2. Inspect panel'den MCP Server'ı enable et
-3. Server `http://127.0.0.1:3845/mcp` adresinde çalışacak
+In Figma Desktop App:
+1. Enable Dev Mode (`Shift+D`)
+2. Enable MCP Server in the inspect panel
+3. Server will run at `http://127.0.0.1:3845/mcp`
 
-### 2. Claude Code MCP Konfigürasyonu
+### 2. Claude Code MCP Configuration
 
 ```json
 {
@@ -49,16 +49,16 @@ Figma Desktop App'te:
 }
 ```
 
-### 3. Skill'i Yükle
+### 3. Install the Skill
 
 ```bash
-# Skill dizinini ~/.claude/skills/ altına kopyala
+# Copy skill directory to ~/.claude/skills/
 cp -r figma-to-code-skill ~/.claude/skills/
 ```
 
-## 📖 Nasıl Çalışır?
+## 📖 How It Works
 
-### 5 Fazlı Workflow
+### 5-Phase Workflow
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -67,13 +67,13 @@ cp -r figma-to-code-skill ~/.claude/skills/
 
      ┌──────────────┐
      │   PHASE 1    │  Context Acquisition
-     │  Veri Toplama │
+     │ Data Gather  │
      └──────┬───────┘
             │
             ▼
     ┌───────────────────────────────────────┐
     │ 1. get_design_context                 │
-    │    → React + Tailwind kod             │
+    │    → React + Tailwind code            │
     │                                       │
     │ 2. get_variable_defs                  │
     │    → Design tokens                    │
@@ -82,114 +82,113 @@ cp -r figma-to-code-skill ~/.claude/skills/
     │    → Component mappings               │
     │                                       │
     │ 4. get_screenshot                     │
-    │    → Görsel referans                  │
+    │    → Visual reference                 │
     │                                       │
-    │ 5. Read mevcut codebase               │
+    │ 5. Read existing codebase             │
     │    → Existing components              │
     └───────────────┬───────────────────────┘
                     │
                     ▼
      ┌──────────────┐
      │   PHASE 2    │  Mapping & Planning
-     │   Planlama   │
+     │   Planning   │
      └──────┬───────┘
             │
             ▼
     ┌───────────────────────────────────────┐
-    │ • Code Connect eşleştirmelerini       │
-    │   kontrol et                          │
-    │ • Mevcut component varsa → kullan     │
-    │ • Yoksa → yeni component planla       │
-    │ • Token mapping oluştur               │
-    │ • Responsive strateji belirle         │
+    │ • Check Code Connect mappings         │
+    │ • If component exists → use it        │
+    │ • If not → plan new component         │
+    │ • Create token mapping                │
+    │ • Define responsive strategy          │
     └───────────────┬───────────────────────┘
                     │
                     ▼
      ┌──────────────┐
      │   PHASE 3    │  Code Generation
-     │  Kod Üretimi │
+     │  Generation  │
      └──────┬───────┘
             │
             ▼
     ┌───────────────────────────────────────┐
-    │ • get_design_context çıktısını        │
-    │   başlangıç noktası olarak kullan     │
-    │ • Design token'ları entegre et        │
-    │ • Semantic HTML uygula                │
-    │ • Tailwind classes optimize et        │
-    │ • TypeScript types ekle               │
+    │ • Use get_design_context output       │
+    │   as starting point                   │
+    │ • Integrate design tokens             │
+    │ • Apply semantic HTML                 │
+    │ • Optimize Tailwind classes           │
+    │ • Add TypeScript types                │
     └───────────────┬───────────────────────┘
                     │
                     ▼
      ┌──────────────┐
      │   PHASE 4    │  Visual Validation
-     │  Doğrulama   │◄────────┐
+     │  Validation  │◄────────┐
      └──────┬───────┘         │
             │                 │ Max 3
-            ▼                 │ iterasyon
+            ▼                 │ iterations
     ┌───────────────────────────────────────┐
     │ HYBRID VALIDATION:                    │
     │                                       │
-    │ 1. Playwright screenshot al           │
-    │ 2. Figma referansı ile karşılaştır    │
-    │ 3. Fark < 2% → ✅ Başarılı            │
-    │ 4. Fark > 2% → Claude Vision analiz   │
-    │ 5. Otomatik düzeltme → tekrar test    │
+    │ 1. Take Playwright screenshot         │
+    │ 2. Compare with Figma reference       │
+    │ 3. Diff < 2% → ✅ Success             │
+    │ 4. Diff > 2% → Claude Vision analyze  │
+    │ 5. Auto-fix → re-test                 │
     └───────────────┬───────────────────────┘
                     │
                     ▼
      ┌──────────────┐
      │   PHASE 5    │  Handoff
-     │    Teslim    │
+     │   Delivery   │
      └──────┬───────┘
             │
             ▼
     ┌───────────────────────────────────────┐
-    │ • Final rapor oluştur                 │
-    │ • Doğruluk yüzdesini belirt           │
-    │ • Kullanılan component'ları listele   │
-    │ • TODO'ları dokümante et              │
-    │ • Kullanım örneği ver                 │
+    │ • Generate final report               │
+    │ • Report accuracy percentage          │
+    │ • List used components                │
+    │ • Document TODOs                      │
+    │ • Provide usage example               │
     └───────────────────────────────────────┘
 ```
 
-## 🔧 Kullanılan MCP Araçları
+## 🔧 MCP Tools Used
 
 ### Figma MCP (figma-desktop)
 
-| Araç | Amaç |
-|------|------|
-| `get_design_context` | React + Tailwind kod üretimi |
+| Tool | Purpose |
+|------|---------|
+| `get_design_context` | React + Tailwind code generation |
 | `get_variable_defs` | Design tokens (colors, spacing, typography) |
-| `get_code_connect_map` | Component mapping'leri |
-| `get_screenshot` | Görsel referans |
-| `add_code_connect_map` | Yeni component mapping ekle |
+| `get_code_connect_map` | Component mappings |
+| `get_screenshot` | Visual reference |
+| `add_code_connect_map` | Add new component mapping |
 
 ### Playwright MCP
 
-| Araç | Amaç |
-|------|------|
-| `playwright_navigate` | Preview sayfasına git |
-| `playwright_screenshot` | Rendered component screenshot |
-| `playwright_evaluate` | CSS değerlerini oku |
+| Tool | Purpose |
+|------|---------|
+| `browser_navigate` | Navigate to preview page |
+| `browser_take_screenshot` | Capture rendered component |
+| `browser_evaluate` | Execute JavaScript |
 
-## 📁 Skill Yapısı
+## 📁 Skill Structure
 
 ```
 figma-to-code-skill/
-├── SKILL.md                    # Ana skill dosyası
-├── README.md                   # Bu dosya
+├── SKILL.md                    # Main skill file
+├── README.md                   # This file
 ├── assets/
 │   ├── examples/
-│   │   └── card-component.md   # Örnek component
+│   │   └── card-component.md   # Example component
 │   └── templates/
 │       └── component.tsx.hbs   # React template
 └── references/
-    ├── figma-mcp-server.md     # MCP araç referansı
+    ├── figma-mcp-server.md     # MCP tool reference
     ├── visual-validation-loop.md
-    ├── token-mapping.md        # Dönüşüm formülleri
+    ├── token-mapping.md        # Conversion formulas
     ├── validation-guide.md
-    ├── common-issues.md        # Sık sorunlar
+    ├── common-issues.md        # Common issues
     ├── preview-setup.md
     ├── ci-cd-integration.md
     ├── storybook-integration.md
@@ -202,24 +201,24 @@ figma-to-code-skill/
         └── handoff.md
 ```
 
-## 💡 Kullanım
+## 💡 Usage
 
-### Temel Kullanım
+### Basic Usage
 
-1. Figma'da bir frame seç
-2. Claude Code'da skill'i tetikle:
+1. Select a frame in Figma
+2. Trigger the skill in Claude Code:
 
 ```
 /figma-to-code-skill
 ```
 
-veya direkt Figma URL'si ile:
+Or with a Figma URL:
 
 ```
-Bu tasarımı koda dönüştür: https://www.figma.com/design/xxx/MyDesign?node-id=123-456
+Convert this design to code: https://www.figma.com/design/xxx/MyDesign?node-id=123-456
 ```
 
-### Örnek Çıktı
+### Example Output
 
 ```markdown
 ## ✅ Conversion Complete
@@ -240,16 +239,16 @@ Bu tasarımı koda dönüştür: https://www.figma.com/design/xxx/MyDesign?node-
 - src/features/hero/components/HeroCard.tsx
 ```
 
-## ⚙️ Konfigürasyon
+## ⚙️ Configuration
 
 ### Rate Limits
 
 | Plan | Limit |
 |------|-------|
-| Starter | 6 tool calls/ay |
+| Starter | 6 tool calls/month |
 | Professional+ | Per-minute (Tier 1) |
 
-### Önerilen Ayarlar
+### Recommended Settings
 
 ```json
 {
@@ -261,47 +260,47 @@ Bu tasarımı koda dönüştür: https://www.figma.com/design/xxx/MyDesign?node-
 
 ## 🐛 Troubleshooting
 
-### Server Bağlantı Hatası
+### Server Connection Error
 
 ```bash
-# Server durumunu kontrol et
+# Check server status
 curl http://127.0.0.1:3845/mcp
 ```
 
-**Çözüm:**
-1. Figma Desktop açık mı?
-2. Dev Mode aktif mi? (Shift+D)
-3. MCP Server enabled mı?
+**Solution:**
+1. Is Figma Desktop open?
+2. Is Dev Mode active? (Shift+D)
+3. Is MCP Server enabled?
 
-### Selection Algılanmıyor
+### Selection Not Detected
 
-**Çözüm:**
-- Frame seçildiğinden emin ol (layer değil)
-- Dev Mode'u refresh et
+**Solution:**
+- Make sure a frame is selected (not just a layer)
+- Refresh Dev Mode toggle
 
-### Rate Limit Aşıldı
+### Rate Limit Exceeded
 
-**Çözüm:**
-- Monthly limit'i bekle (Starter)
-- Professional plana yükselt
+**Solution:**
+- Wait for monthly limit reset (Starter)
+- Upgrade to Professional plan
 
-## 📚 Referanslar
+## 📚 References
 
 - [Figma MCP Server Docs](https://developers.figma.com/docs/figma-mcp-server/)
 - [Local Server Setup](https://developers.figma.com/docs/figma-mcp-server/local-server-installation/)
 - [Claude Code Skills](https://docs.anthropic.com/claude-code/skills)
 
-## 📄 Lisans
+## 📄 License
 
 MIT License
 
-## 🤝 Katkıda Bulunma
+## 🤝 Contributing
 
-1. Fork et
-2. Feature branch oluştur (`git checkout -b feature/amazing-feature`)
-3. Commit et (`git commit -m 'feat: Add amazing feature'`)
-4. Push et (`git push origin feature/amazing-feature`)
-5. Pull Request aç
+1. Fork it
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ---
 

@@ -1,10 +1,26 @@
 ---
+name: prompt-compliance-checker
+model: sonnet
+color: cyan
 description: |
   Verilen prompt ile yapılan implementasyonu karşılaştırarak uyumluluk kontrolü yapar.
   Bu agent'ı kullan:
   - "review et", "kontrol et", "uyumlu mu" dendiğinde
   - Bir implementasyon tamamlandıktan sonra doğrulama için
   - Prompt ile kod arasındaki tutarsızlıkları bulmak için
+
+  <example>
+  User: "Bu değişiklikleri review et, prompt'a uyumlu mu?"
+  Assistant: "prompt-compliance-checker agent'ını kullanarak review yapıyorum"
+  </example>
+  <example>
+  User: "Yaptığım implementasyon doğru mu kontrol et"
+  Assistant: "Implementasyonu orijinal prompt'a göre doğruluyorum"
+  </example>
+  <example>
+  User: "Prompt ile yapılan iş örtüşüyor mu?"
+  Assistant: "Uyumluluk kontrolü başlatıyorum"
+  </example>
 
 tools:
   - Read

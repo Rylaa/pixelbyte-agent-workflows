@@ -1,0 +1,101 @@
+{
+    "version": "1.0",
+    "description": "Skill activation triggers for pb-frontend plugin. Controls when skills are automatically suggested or required.",
+    "skills": {
+        "frontend-dev-guidelines": {
+            "type": "guardrail",
+            "enforcement": "block",
+            "priority": "critical",
+            "alwaysActive": true,
+            "description": "React/TypeScript best practices including Tailwind CSS, shadcn/ui, SWR, and performance patterns",
+            "promptTriggers": {
+                "keywords": [
+                    "component",
+                    "react component",
+                    "UI",
+                    "interface",
+                    "page",
+                    "modal",
+                    "dialog",
+                    "form",
+                    "button",
+                    "input",
+                    "card",
+                    "menu",
+                    "Tailwind",
+                    "shadcn",
+                    "Radix",
+                    "styling",
+                    "layout",
+                    "frontend",
+                    "React",
+                    "view",
+                    "design",
+                    "hook",
+                    "useState",
+                    "useEffect",
+                    "useSWR",
+                    "suspense",
+                    "performance",
+                    "accessibility",
+                    "a11y"
+                ],
+                "intentPatterns": [
+                    "(create|add|make|build|update|modify|edit).*?(component|UI|page|modal|dialog|form)",
+                    "(how to|best practice).*?(component|react|Tailwind|shadcn)",
+                    "(style|design|layout).*?(component|UI)",
+                    "(fix|debug|resolve).*?(render|performance|style)",
+                    "(implement|add).*?(feature|functionality)"
+                ]
+            },
+            "fileTriggers": {
+                "pathPatterns": [
+                    "src/**/*.tsx",
+                    "src/**/*.ts",
+                    "app/**/*.tsx",
+                    "components/**/*.tsx",
+                    "pages/**/*.tsx"
+                ],
+                "pathExclusions": [
+                    "**/*.test.tsx",
+                    "**/*.test.ts",
+                    "**/*.spec.tsx",
+                    "**/*.spec.ts",
+                    "**/node_modules/**"
+                ],
+                "contentPatterns": [
+                    "from '@radix-ui/",
+                    "import.*from.*lucide-react",
+                    "className=",
+                    "cn\\(",
+                    "tailwind",
+                    "@tailwindcss",
+                    "useSWR",
+                    "useState",
+                    "useEffect"
+                ]
+            },
+            "blockMessage": "⚠️ BLOCKED - Frontend Best Practices Required\n\n📋 REQUIRED ACTION:\n1. Use Skill tool: 'pb-frontend:frontend-dev-guidelines'\n2. Review React/TypeScript patterns\n3. Check Tailwind CSS and shadcn/ui usage\n4. Apply performance best practices\n5. Then retry this operation\n\nReason: Enforce frontend development standards",
+            "skipConditions": {
+                "sessionSkillUsed": true,
+                "fileMarkers": [
+                    "@skip-validation"
+                ],
+                "envOverride": "SKIP_FRONTEND_GUIDELINES"
+            }
+        }
+    },
+    "notes": {
+        "enforcement_types": {
+            "suggest": "Skill suggestion appears but doesn't block execution",
+            "block": "Requires skill to be used before proceeding (guardrail)",
+            "warn": "Shows warning but allows proceeding"
+        },
+        "priority_levels": {
+            "critical": "Highest - Always trigger when matched",
+            "high": "Important - Trigger for most matches",
+            "medium": "Moderate - Trigger for clear matches",
+            "low": "Optional - Trigger only for explicit matches"
+        }
+    }
+}

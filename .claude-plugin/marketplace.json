@@ -14,7 +14,7 @@
         "name": "Pixelbyte",
         "url": "https://github.com/Rylaa"
       },
-      "source": "./..",
+      "source": "./plugins/pixelbyte-agent-workflows",
       "category": "development"
     }
   ]

@@ -20,7 +20,7 @@ Then install individual plugins:
 # Install all plugins
 claude plugin install pb-figma
 claude plugin install pb-frontend
-claude plugin install pb-code-review
+claude plugin install pb-agents
 
 # Or install only what you need
 claude plugin install pb-figma  # Just Figma-to-code
@@ -32,7 +32,7 @@ claude plugin install pb-figma  # Just Figma-to-code
 |--------|-------------|----------|
 | `pb-figma` | Figma-to-code conversion with pixel-perfect accuracy | Design |
 | `pb-frontend` | Senior-level frontend development guidelines | Development |
-| `pb-code-review` | Prompt compliance checker agent | Quality |
+| `pb-agents` | Prompt compliance checker and component documentation agents | Quality |
 
 ---
 
@@ -111,25 +111,31 @@ Automatically invoked when creating components, pages, or features. Mention "fro
 
 ---
 
-## pb-code-review
+## pb-agents
 
-Validates that implementation matches the original prompt/request.
+Pixelbyte agent collection for specialized development workflows.
 
-### Checks
+### Available Agents
 
-- Does implementation match prompt requirements?
-- Is existing functionality preserved (regression detection)?
-- Are there any logical or technical errors?
+**prompt-compliance-checker**
+- Validates implementation matches original prompt/request
+- Detects regressions and logical errors
 - Evidence-based feedback with file paths and line numbers
+
+**component-documentation**
+- Generates comprehensive technical documentation for React/TypeScript components
+- Analyzes import trees recursively (max 3 levels)
+- Maps state & data flow, detects API endpoints
 
 ### Usage
 
 Via Task tool:
 ```
-Task(subagent_type="pb-code-review:prompt-compliance-checker", prompt="Review my changes against the original prompt")
+Task(subagent_type="pb-agents:prompt-compliance-checker", prompt="Review my changes against the original prompt")
+Task(subagent_type="pb-agents:component-documentation", prompt="Document the UserProfile component")
 ```
 
-Or ask: "Check if my changes match what was requested"
+Or ask: "Check if my changes match what was requested" or "Document this component"
 
 ---
 

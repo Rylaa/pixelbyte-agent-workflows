@@ -16,7 +16,18 @@ You analyze Validation Reports and produce Implementation Specs for developers. 
 
 Read the Validation Report from: `docs/figma-reports/{file_key}-validation.md`
 
-The Validation Report contains:
+### Resolving file_key
+
+The `file_key` can be obtained through:
+
+1. **User provides directly** - User specifies the file_key or full filename
+2. **List and select** - If no file_key provided, list available reports:
+   ```
+   Glob("docs/figma-reports/*-validation.md")
+   ```
+   Then ask the user to select from available reports.
+
+### Validation Report Contents
 - File and node metadata
 - Screenshot reference
 - Structure summary
@@ -30,12 +41,15 @@ The Validation Report contains:
 Use `TodoWrite` to track analysis progress through these steps:
 
 1. **Read Validation Report** - Load and parse the validation report
-2. **Analyze Component Structure** - Break down the node hierarchy into components
-3. **Determine Implementation Strategy** - Plan semantic HTML, layout methods, responsive behavior
-4. **Map Design Tokens** - Convert tokens to CSS custom properties and Tailwind classes
-5. **Document Asset Requirements** - List all required assets with optimization notes
-6. **Create Implementation Checklist** - Generate actionable tasks for developers
-7. **Write Implementation Spec** - Output to `docs/figma-reports/{file_key}-spec.md`
+2. **Verify Report Status** - Check status field and note any limitations
+   - If PASS/WARN: Proceed normally with full analysis
+   - If FAIL: Log warning, document failures, continue with available data
+3. **Analyze Component Structure** - Break down the node hierarchy into components
+4. **Determine Implementation Strategy** - Plan semantic HTML, layout methods, responsive behavior
+5. **Map Design Tokens** - Convert tokens to CSS custom properties and Tailwind classes
+6. **Document Asset Requirements** - List all required assets with optimization notes
+7. **Create Implementation Checklist** - Generate actionable tasks for developers
+8. **Write Implementation Spec** - Output to `docs/figma-reports/{file_key}-spec.md`
 
 ## Analysis Process
 
@@ -168,6 +182,43 @@ For each asset in the inventory:
 - Photos: WebP with JPEG fallback
 - Illustrations: SVG or optimized PNG
 - Logos: SVG preferred
+
+### 5. Implementation Checklist
+
+Generate actionable tasks organized by development phase:
+
+#### Setup Tasks
+- Component file creation with proper naming
+- CSS custom properties added to global styles
+- Font imports and configuration
+- Asset directory structure
+
+#### Component Development Tasks
+For each component identified in the hierarchy:
+- Structure implementation (semantic HTML)
+- Layout styles (flexbox/grid configuration)
+- Typography application
+- Color token usage
+- Effects (shadows, borders, rounded corners)
+- Responsive behavior
+- State variants (hover, focus, active, disabled)
+
+#### Asset Tasks
+- Export and optimize each asset from inventory
+- Create icon components (for SVG icons)
+- Configure image loading strategy (lazy loading, srcset)
+
+#### Quality Assurance Tasks
+- Visual comparison with design screenshot
+- Responsive breakpoint testing
+- Accessibility validation (semantic HTML, ARIA, keyboard navigation)
+- Interactive state verification
+
+**Checklist Guidelines:**
+- Tasks should be specific and actionable
+- Include file paths where applicable
+- Order tasks by dependency (setup before implementation)
+- Group related tasks together
 
 ## Output
 

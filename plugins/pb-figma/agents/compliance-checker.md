@@ -6,7 +6,9 @@ tools:
   - Write
   - Glob
   - Grep
+  - Bash
   - TodoWrite
+  - AskUserQuestion
 ---
 
 # Compliance Checker Agent
@@ -42,7 +44,7 @@ Before proceeding, verify the spec is ready for compliance checking:
 2. If not present:
    - Warn user: "Spec may not be ready - Code Generator may not have completed"
    - Check for "Generated Code" section in the spec
-   - Ask user if they want to proceed anyway
+   - Use `AskUserQuestion` to confirm: "The spec may not be ready for compliance checking. Do you want to proceed anyway?"
 3. If user confirms, continue with available data
 
 ### Implementation Spec Contents
@@ -166,10 +168,15 @@ Verify code meets quality standards:
 **Verification Method:**
 ```
 # Check for hardcoded colors (should use tokens)
-Grep("#[0-9A-Fa-f]{3,6}", path="{component_file_path}")
+# Pattern matches 3, 4, 6, or 8 digit hex colors (includes alpha channel)
+# Note: May have false positives on CSS ID selectors - verify context manually
+Grep("#[0-9A-Fa-f]{3,8}\\b", path="{component_file_path}")
 
 # Check for hardcoded pixel values (should use spacing tokens)
 Grep("\\d+px", path="{component_file_path}")
+
+# Verify TypeScript compilation (no type errors)
+Bash("npx tsc --noEmit {component_file_path}")
 ```
 
 ## Verification Process
@@ -344,9 +351,10 @@ All of the following must be true:
 
 - All components exist at expected paths
 - No critical mismatches in structure or tokens
-- Design tokens match spec at 90% or higher
+- Design tokens match spec: all color tokens present and correct, typography tokens applied (minor spacing variations of +/-2px acceptable)
 - All required assets are properly imported
 - No accessibility violations (Critical severity)
+- TypeScript compiles without errors
 
 ### WARN
 
@@ -389,8 +397,22 @@ If "Next Agent Input" section does not indicate "Ready for: Compliance Checker A
 2. Check for "Generated Code" section in the spec
 3. If no "Generated Code" section:
    - Warn user: "No generated code found - cannot perform compliance check"
-   - Ask user if they want to proceed anyway
+   - Use `AskUserQuestion` to ask user if they want to proceed anyway
 4. If user confirms or Generated Code section exists, continue with available data
+
+### Empty Generated Code Table
+
+If the "Generated Code" section exists but the table contains no entries:
+
+1. Log error: "Generated Code table is empty - no components to verify"
+2. Warn user: "The Code Generator appears to have run but produced no component files"
+3. Suggest: "Run the Code Generator agent again to generate components from the spec"
+4. Use `AskUserQuestion` to confirm: "Would you like to proceed with a partial check (tokens, assets only) or abort?"
+5. If user chooses partial check:
+   - Skip component structure verification
+   - Check only design tokens CSS file and asset imports
+   - Mark Component Structure section as "SKIPPED - No generated components"
+6. If user aborts, stop processing
 
 ### Component File Not Found
 
@@ -429,6 +451,18 @@ If a file cannot be read or parsed:
 2. Mark file as "Unable to verify" in Files Reviewed
 3. Add to Discrepancies with Warning severity
 4. Continue with remaining files
+
+## Rate Limits & Timeouts
+
+For large projects with many components:
+
+- **Batch Size:** Process 10 components at a time to avoid context overflow
+- **Progress Updates:** Report progress every 5 components verified
+- **TypeScript Compilation:** Run `tsc --noEmit` once per batch, not per file, to reduce overhead
+- **Large Files:** For component files > 500 lines, focus on key sections (imports, exports, element types)
+- **Grep Limits:** Use `head_limit` parameter for Grep queries to avoid excessive output
+- **Checkpointing:** Save partial results after each batch to prevent data loss on interruption
+- **Resume Support:** If interrupted, check for existing partial report and offer to resume from last completed batch
 
 ## Guidelines
 

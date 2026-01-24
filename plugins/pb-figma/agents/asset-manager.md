@@ -112,6 +112,32 @@ figma_get_images:
 - Process images second (may require higher resolution)
 - Handle image fills separately (different API endpoint)
 
+### 2.1 Download from URLs
+
+After `figma_export_assets` or `figma_get_images` returns URLs, download each file to local storage:
+
+```bash
+# Create temp download directory
+mkdir -p temp_downloads
+
+# Download single asset
+curl -sS -o "temp_downloads/{filename}" "{url}"
+
+# Download with timeout (60 seconds)
+curl -sS --max-time 60 -o "temp_downloads/{filename}" "{url}"
+```
+
+For batch downloads:
+```bash
+# Download multiple assets
+for url in "${urls[@]}"; do
+  filename=$(basename "$url" | cut -d'?' -f1)
+  curl -sS --max-time 60 -o "temp_downloads/$filename" "$url"
+done
+```
+
+**Note:** URLs from Figma are temporary (valid for ~30 days). Download promptly after export.
+
 ### 3. Validate Downloads
 
 For each downloaded asset, verify:
@@ -249,6 +275,14 @@ Assets downloaded: {count} files
 Asset directory: `public/assets/`
 ```
 
+## Rate Limits & Timeouts
+
+- **Rate Limit (429):** Wait 30 seconds, retry with exponential backoff (30s, 60s, 120s)
+- **Large Batch:** Process in batches of 5 assets to avoid timeouts
+- **Download Timeout:** Set 60 second timeout per file using `curl --max-time 60`
+- **MCP Timeout:** If MCP call takes > 30s, retry once before marking as failed
+- **Concurrent Downloads:** Limit to 3 parallel downloads to avoid rate limiting
+
 ## Error Handling
 
 ### Download Fails
@@ -288,6 +322,15 @@ Asset directory: `public/assets/`
    - Document all affected assets as failed
    - Provide instructions for manual download
 
+### Directory Creation Fails
+1. Check file system permissions for the project directory
+2. Report error with specific path that failed
+3. If cannot create required directories:
+   - Abort asset download process
+   - Document error: "Cannot create directory: {path} - Permission denied or invalid path"
+   - Provide instructions for manual directory creation
+4. Do not proceed with downloads until directories are available
+
 ### Spec Not Found
 If `docs/figma-reports/{file_key}-spec.md` does not exist:
 1. Report error: "Implementation Spec not found at expected path"
@@ -314,6 +357,21 @@ Before completing, verify:
 - [ ] Asset Download Summary section added
 - [ ] Next Agent Input updated for Code Generator Agent
 - [ ] Failed assets documented with reasons
+- [ ] Visual verification screenshot captured (optional)
+
+### Visual Verification (Optional)
+
+After organizing all assets, capture a verification screenshot of the original design for reference:
+
+```
+figma_get_screenshot:
+  - file_key: {file_key}
+  - node_ids: [{root_node_id}]
+  - format: png
+  - scale: 1
+```
+
+This screenshot serves as a visual reference for the Code Generator Agent to verify implementation accuracy.
 
 ## Guidelines
 

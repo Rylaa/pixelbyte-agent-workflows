@@ -317,11 +317,11 @@ Write Implementation Spec to: `docs/figma-reports/{file_key}-spec.md`
 
 ## Assets Required
 
-| Asset | Filename | Format | Size | Optimization Notes |
-|-------|----------|--------|------|-------------------|
-| Logo | `logo.svg` | SVG | - | Inline for styling |
-| Hero Image | `hero-image.webp` | WebP | 1200x600 | Lazy load, provide srcset |
-| Icon: Search | `icon-search.svg` | SVG | 24x24 | Use as component |
+| Asset | Filename | Format | Node ID | Size | Optimization Notes |
+|-------|----------|--------|---------|------|-------------------|
+| Logo | `logo.svg` | SVG | 1:234 | - | Inline for styling |
+| Hero Image | `hero-image.webp` | WebP | 1:456 | 1200x600 | Lazy load, provide srcset |
+| Icon: Search | `icon-search.svg` | SVG | 1:789 | 24x24 | Use as component |
 
 ## Implementation Checklist
 

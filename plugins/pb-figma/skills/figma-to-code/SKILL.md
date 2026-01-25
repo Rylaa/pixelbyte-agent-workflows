@@ -323,6 +323,51 @@ Upon receiving a Figma URL:
 - Layout info from generated code
 - Screenshot for validation baseline
 
+**Step 3: Code Connect Check**
+
+Before generating new components, check for existing Code Connect mappings:
+
+**Reference:** `references/code-connect-guide.md`
+
+```javascript
+mcp__pixelbyte-figma-mcp__figma_get_code_connect_map({
+  params: { file_key: "FILE_KEY" }
+})
+```
+
+**If mappings exist:**
+- Document which Figma components are already mapped
+- Note the component paths and prop mappings
+- Flag these nodes as "use existing code" - do NOT regenerate
+- Extract only unmapped nodes for code generation
+
+**If no mappings exist:**
+- Proceed with full code generation for all nodes
+- After successful generation, offer to create Code Connect mappings
+- Use `figma_add_code_connect_map` to establish future mappings
+
+**Decision matrix:**
+
+| Scenario | Action |
+|----------|--------|
+| Node has Code Connect mapping | Import existing component |
+| Node has partial mapping (missing variants) | Extend existing component |
+| Node has no mapping | Generate new component |
+| Multiple nodes share same mapping | Reuse single component |
+
+**Example output:**
+```markdown
+## Code Connect Analysis
+
+### Mapped Components (skip generation)
+- Button (node 123:456) → src/components/ui/button.tsx
+- Badge (node 789:012) → src/components/ui/badge.tsx
+
+### Unmapped Components (generate)
+- HeroCard (node 345:678) → NEW
+- PricingTable (node 901:234) → NEW
+```
+
 ### Phase 2: Mapping & Planning
 
 **Before writing code, create a plan:**
@@ -772,6 +817,7 @@ const fontFamily = "font-sans"; // Fallback
 - **Common issues**: `references/common-issues.md`
 - **Preview route setup**: `references/preview-setup.md`
 - **Test generation guide**: `references/test-generation.md`
+- **Code Connect guide**: `references/code-connect-guide.md`
 
 ### Prompt Templates
 Phase-specific prompts located in `references/prompts/`:

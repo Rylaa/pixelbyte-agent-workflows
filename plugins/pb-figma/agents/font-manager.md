@@ -772,7 +772,11 @@ unzip -o /tmp/{FontFamily}.zip -d /tmp/{FontFamily}
 
 # Copy to project (prefer woff2, fallback to ttf)
 cp /tmp/{FontFamily}/static/*.woff2 public/fonts/ 2>/dev/null || \
+cp /tmp/{FontFamily}/static/*.ttf public/fonts/ 2>/dev/null || \
 cp /tmp/{FontFamily}/*.ttf public/fonts/
+
+# Cleanup temp files
+rm -rf /tmp/{FontFamily}.zip /tmp/{FontFamily}
 ```
 
 ### Step 3: Create CSS File
@@ -780,9 +784,11 @@ cp /tmp/{FontFamily}/*.ttf public/fonts/
 Write to `src/assets/styles/fonts.css`:
 
 ```css
+/* Inter Font Family */
 @font-face {
   font-family: 'Inter';
-  src: url('/fonts/Inter-Regular.woff2') format('woff2');
+  src: url('/fonts/Inter-Regular.woff2') format('woff2'),
+       url('/fonts/Inter-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -790,7 +796,8 @@ Write to `src/assets/styles/fonts.css`:
 
 @font-face {
   font-family: 'Inter';
-  src: url('/fonts/Inter-Medium.woff2') format('woff2');
+  src: url('/fonts/Inter-Medium.woff2') format('woff2'),
+       url('/fonts/Inter-Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -798,7 +805,8 @@ Write to `src/assets/styles/fonts.css`:
 
 @font-face {
   font-family: 'Inter';
-  src: url('/fonts/Inter-SemiBold.woff2') format('woff2');
+  src: url('/fonts/Inter-SemiBold.woff2') format('woff2'),
+       url('/fonts/Inter-SemiBold.ttf') format('truetype');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -806,7 +814,8 @@ Write to `src/assets/styles/fonts.css`:
 
 @font-face {
   font-family: 'Inter';
-  src: url('/fonts/Inter-Bold.woff2') format('woff2');
+  src: url('/fonts/Inter-Bold.woff2') format('woff2'),
+       url('/fonts/Inter-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;

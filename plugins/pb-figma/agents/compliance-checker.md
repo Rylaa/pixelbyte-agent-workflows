@@ -179,6 +179,72 @@ Grep("\\d+px", path="{component_file_path}")
 Bash("npx tsc --noEmit {component_file_path}")
 ```
 
+### 6. Layer Order Validation
+
+**Purpose:** Verify generated code respects layer order from spec.
+
+**Check:**
+1. Read layerOrder from Implementation Spec
+2. Parse component rendering order from generated code
+3. Compare zIndex order matches code order
+
+**Example validation:**
+
+Spec says:
+```yaml
+layerOrder:
+  - PageControl (zIndex: 900)
+  - ContinueButton (zIndex: 100)
+```
+
+React code must have:
+```tsx
+<PageControl /> {/* First = top */}
+<ContinueButton />      {/* Second = bottom */}
+```
+
+SwiftUI code must have:
+```swift
+ContinueButton()      {/* First = bottom */}
+PageControl() {/* Last = top */}
+```
+
+**Validation result:**
+- ✅ PASS: Order matches spec
+- ❌ FAIL: Order doesn't match spec → request Code Generator fix
+
+#### Position Validation
+
+Verify components with `position: top` are actually positioned at top:
+
+**React:** Check for `top-0`, `top-[60px]`, or similar Tailwind classes
+**SwiftUI:** Check for `.frame(alignment: .top)` or `.offset(y: 60)`
+
+**Common mistakes:**
+- Component marked `position: top` in spec but has `bottom-0` class
+- absoluteY value doesn't match between spec and code
+
+**Verification Method:**
+```
+# Check for layerOrder in spec
+Grep("layerOrder:", path="docs/figma-reports/{file_key}-spec.md")
+
+# For React: Check rendering order matches zIndex order
+# Read component file and verify JSX element order
+Read("{component_file_path}")
+
+# For React: Check position classes
+Grep("top-\\[?[0-9]+", path="{component_file_path}")
+Grep("bottom-\\[?[0-9]+", path="{component_file_path}")
+
+# For SwiftUI: Check alignment and offset
+Grep("\\.frame.*alignment.*\\.top", path="{component_file_path}")
+Grep("\\.offset\\(y:", path="{component_file_path}")
+
+# Verify absoluteY coordinates match spec
+Grep("absoluteY:", path="docs/figma-reports/{file_key}-spec.md")
+```
+
 ## Verification Process
 
 ### Step 1: Load Spec Requirements
@@ -192,6 +258,7 @@ Parse the Implementation Spec to extract:
 | Tokens | Design Tokens (Ready to Use) | CSS properties, Tailwind classes |
 | Assets | Downloaded Assets | Paths, filenames, usage context |
 | Generated files | Generated Code | File paths, component names |
+| Layer order | Component details | zIndex values, rendering order, position context |
 
 ### Step 2: Scan Generated Code
 
@@ -254,14 +321,15 @@ Write Final Report to: `docs/figma-reports/{file_key}-final.md`
 | Assets | {n} | {n} | {n} | {n} |
 | Accessibility | {n} | {n} | {n} | {n} |
 | Code Quality | {n} | {n} | {n} | {n} |
+| Layer Order | {n} | {n} | {n} | {n} |
 | **Total** | **{n}** | **{n}** | **{n}** | **{n}** |
 
 ## Component Status
 
-| Component | File | Structure | Tokens | Assets | A11y | Quality | Status |
-|-----------|------|-----------|--------|--------|------|---------|--------|
-| {Name} | `{path}` | OK | OK | OK | WARN | OK | PASS |
-| {Name} | `{path}` | OK | FAIL | OK | OK | OK | FAIL |
+| Component | File | Structure | Tokens | Assets | A11y | Quality | Layer Order | Status |
+|-----------|------|-----------|--------|--------|------|---------|-------------|--------|
+| {Name} | `{path}` | OK | OK | OK | WARN | OK | OK | PASS |
+| {Name} | `{path}` | OK | FAIL | OK | OK | OK | OK | FAIL |
 
 ## Discrepancies
 
@@ -328,6 +396,12 @@ Write Final Report to: `docs/figma-reports/{file_key}-final.md`
 - [ ] No hardcoded values (3 instances)
 - [x] Clean structure
 
+### Layer Order
+- [x] Rendering order matches zIndex spec
+- [x] Position context correct (top/center/bottom)
+- [x] absoluteY coordinates match
+- [x] Framework-specific order respected
+
 ## Conclusion
 
 {Summary paragraph describing overall compliance status, key issues found, and recommendations.}
@@ -355,6 +429,7 @@ All of the following must be true:
 - All required assets are properly imported
 - No accessibility violations (Critical severity)
 - TypeScript compiles without errors
+- Layer order matches spec (rendering order follows zIndex specification)
 
 ### WARN
 
@@ -376,6 +451,7 @@ Any of the following:
 - Semantic HTML completely wrong (div instead of button for interactive)
 - More than 3 critical issues
 - TypeScript compilation errors
+- Layer order completely reversed or critical components rendered in wrong order
 
 ## Error Handling
 

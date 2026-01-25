@@ -1,0 +1,10 @@
+{
+  "extraKnownMarketplaces": {
+    "local-dev": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/yusufdemirkoparan/Projects/pixelbyte-agent-workflows"
+      }
+    }
+  }
+}

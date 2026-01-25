@@ -9,7 +9,7 @@
     {
       "name": "pb-figma",
       "description": "Figma-to-code conversion with pixel-perfect accuracy. Includes Pixelbyte Figma MCP Server for design token extraction and 5-phase workflow with visual validation.",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "author": {
         "name": "Pixelbyte",
         "url": "https://github.com/Rylaa"

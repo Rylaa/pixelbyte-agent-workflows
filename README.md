@@ -38,7 +38,7 @@ claude plugin install pb-figma  # Just Figma-to-code
 
 ## pb-figma
 
-Converts Figma designs to pixel-perfect React/Tailwind code using a 5-phase workflow with 85%+ accuracy target.
+Converts Figma designs to pixel-perfect code for multiple frameworks using a 5-phase workflow with 85%+ accuracy target.
 
 ### Requirements
 
@@ -50,8 +50,21 @@ export FIGMA_PERSONAL_ACCESS_TOKEN="your-token-here"
 
 Get your token: Figma → Settings → Personal Access Tokens
 
+### Supported Frameworks
+
+pb-figma supports multiple frontend frameworks with specialized agents:
+
+- **React + TypeScript + Tailwind** - Production-ready React components with modern patterns
+- **SwiftUI** - Native iOS/macOS components with accessibility and MARK organization
+- **Vue 3** - Coming soon (v1.2.0)
+- **Kotlin Compose** - Coming soon (v1.2.0)
+
+Framework detection is automatic based on project structure.
+
 ### Features
 
+- **Multi-framework support** - React, SwiftUI, Vue, Kotlin (framework auto-detection)
+- **Framework-specific best practices** - Each agent follows platform conventions
 - Figma design extraction via Pixelbyte Figma MCP
 - Design token mapping (colors, typography, spacing)
 - Code Connect support for component mapping
@@ -62,13 +75,28 @@ Get your token: Figma → Settings → Personal Access Tokens
 
 1. **Context Acquisition** - Extract design structure, tokens, and screenshots
 2. **Mapping & Planning** - Map Figma components to codebase components
-3. **Code Generation** - Generate React/Tailwind code
+3. **Code Generation** - Generate framework-specific code (React/SwiftUI/Vue/Kotlin)
 4. **Visual Validation** - Compare implementation with Figma using Claude Vision
 5. **Handoff** - Final documentation and TODO items
+
+### Framework Documentation
+
+| Framework | Agent | Status | Documentation |
+|-----------|-------|--------|---------------|
+| React + Tailwind | `code-generator-react` | ✅ Production | Auto-invoked for .tsx/.jsx projects |
+| SwiftUI | `code-generator-swiftui` | ✅ Production | Auto-invoked for .swift projects |
+| Vue 3 | `code-generator-vue` | 🚧 Coming v1.2.0 | Planned |
+| Kotlin Compose | `code-generator-kotlin` | 🚧 Coming v1.2.0 | Planned |
 
 ### Usage
 
 Provide a Figma URL or mention "figma-to-code", "convert Figma", "implement design".
+
+**Examples:**
+- "Convert this Figma design to React: [URL]"
+- "Generate SwiftUI code from this Figma component: [URL]"
+
+Framework is detected automatically based on project file extensions.
 
 ### MCP Server
 

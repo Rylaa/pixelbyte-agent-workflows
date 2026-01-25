@@ -542,3 +542,190 @@ extension Font {
 3. **Bundle Target:** Ensure fonts are included in the app target's "Copy Bundle Resources" build phase.
 
 4. **File Location for Extension:** Create `FontExtensions.swift` in the same folder as other Swift files, typically `$PROJECT_ROOT/$PROJECT_NAME/Extensions/` or `$PROJECT_ROOT/$PROJECT_NAME/Utilities/`.
+
+## Platform Setup: Kotlin/Android
+
+### Directory Structure
+
+```
+project/
+├── app/
+│   └── src/
+│       └── main/
+│           ├── res/
+│           │   └── font/
+│           │       ├── inter_regular.ttf
+│           │       ├── inter_medium.ttf
+│           │       ├── inter_semibold.ttf
+│           │       ├── inter_bold.ttf
+│           │       └── inter.xml
+│           └── java/...
+└── build.gradle
+```
+
+### Step 1: Find Android Project Structure
+
+Use Glob tool to locate project files:
+
+```
+# Find app module
+Glob("**/app/src/main")
+
+# Find existing res folder
+Glob("**/res")
+```
+
+Or via bash:
+```bash
+# Find app module
+find . -path "*/app/src/main" -type d | head -1
+
+# Find existing res folder
+find . -path "*/app/src/main/res" -type d | head -1
+```
+
+### Step 2: Create Font Directory
+
+```bash
+# Find the res directory
+RES_DIR=$(find . -path "*/app/src/main/res" -type d | head -1)
+if [ -z "$RES_DIR" ]; then
+    echo "Error: No Android res directory found"
+    exit 1
+fi
+
+# Create font directory
+mkdir -p "$RES_DIR/font"
+```
+
+### Step 3: Download and Copy Fonts
+
+```bash
+# Download font
+curl -L "https://fonts.google.com/download?family={FontFamily}" -o /tmp/{FontFamily}.zip
+unzip -o /tmp/{FontFamily}.zip -d /tmp/{FontFamily}
+
+# Copy TTF files with Android naming (lowercase, underscores)
+# Android resource names must be lowercase with underscores only
+cp /tmp/{FontFamily}/static/Inter-Regular.ttf "$RES_DIR/font/inter_regular.ttf"
+cp /tmp/{FontFamily}/static/Inter-Medium.ttf "$RES_DIR/font/inter_medium.ttf"
+cp /tmp/{FontFamily}/static/Inter-SemiBold.ttf "$RES_DIR/font/inter_semibold.ttf"
+cp /tmp/{FontFamily}/static/Inter-Bold.ttf "$RES_DIR/font/inter_bold.ttf"
+
+# Cleanup temp files
+rm -rf /tmp/{FontFamily}.zip /tmp/{FontFamily}
+```
+
+**Important:** Android resource names must be lowercase with underscores only (e.g., `inter_regular.ttf`, not `Inter-Regular.ttf`).
+
+### Step 4: Create Font Family XML
+
+Write to `res/font/inter.xml`:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <font
+        android:font="@font/inter_regular"
+        android:fontStyle="normal"
+        android:fontWeight="400"
+        app:font="@font/inter_regular"
+        app:fontStyle="normal"
+        app:fontWeight="400" />
+
+    <font
+        android:font="@font/inter_medium"
+        android:fontStyle="normal"
+        android:fontWeight="500"
+        app:font="@font/inter_medium"
+        app:fontStyle="normal"
+        app:fontWeight="500" />
+
+    <font
+        android:font="@font/inter_semibold"
+        android:fontStyle="normal"
+        android:fontWeight="600"
+        app:font="@font/inter_semibold"
+        app:fontStyle="normal"
+        app:fontWeight="600" />
+
+    <font
+        android:font="@font/inter_bold"
+        android:fontStyle="normal"
+        android:fontWeight="700"
+        app:font="@font/inter_bold"
+        app:fontStyle="normal"
+        app:fontWeight="700" />
+
+</font-family>
+```
+
+### Step 5: Create Compose Typography (Optional)
+
+For Jetpack Compose projects, create `Type.kt`:
+
+```kotlin
+package com.example.app.ui.theme
+
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import com.example.app.R
+
+val InterFontFamily = FontFamily(
+    Font(R.font.inter_regular, FontWeight.Normal),
+    Font(R.font.inter_medium, FontWeight.Medium),
+    Font(R.font.inter_semibold, FontWeight.SemiBold),
+    Font(R.font.inter_bold, FontWeight.Bold)
+)
+
+val Typography = Typography(
+    bodyLarge = TextStyle(
+        fontFamily = InterFontFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        lineHeight = 24.sp
+    ),
+    titleLarge = TextStyle(
+        fontFamily = InterFontFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 22.sp,
+        lineHeight = 28.sp
+    ),
+    // ... other styles
+)
+```
+
+### Downloadable Fonts Alternative
+
+For Google Fonts, Android supports downloadable fonts:
+
+```xml
+<!-- res/font/inter.xml -->
+<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fontProviderAuthority="com.google.android.gms.fonts"
+    android:fontProviderPackage="com.google.android.gms"
+    android:fontProviderQuery="Inter"
+    android:fontProviderCerts="@array/com_google_android_gms_fonts_certs"
+    app:fontProviderAuthority="com.google.android.gms.fonts"
+    app:fontProviderPackage="com.google.android.gms"
+    app:fontProviderQuery="Inter"
+    app:fontProviderCerts="@array/com_google_android_gms_fonts_certs">
+</font-family>
+```
+
+**Note:** Downloadable fonts require Google Play Services and network at first load.
+
+### Important Notes
+
+1. **Resource Naming:** All font files must use lowercase letters and underscores only. Invalid names will cause build errors.
+
+2. **App Compat:** The `app:` namespace attributes provide backward compatibility for devices below API 26.
+
+3. **Min SDK:** Font resources in XML require `minSdkVersion 16+`. Downloadable fonts require `minSdkVersion 14+` with AppCompat.

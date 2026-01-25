@@ -132,20 +132,39 @@ Before dispatching the code generator (Agent 4), detect the project framework:
 
 2. **Check for Android/Kotlin:**
    ```bash
-   find . -name "build.gradle.kts" -exec grep -l "androidx.compose" {} \; 2>/dev/null
+   find . -maxdepth 3 \( -name "build.gradle.kts" -o -name "build.gradle" \) -not -path "*/node_modules/*" -not -path "*/build/*" -exec grep -l "androidx.compose" {} \; 2>/dev/null
    ```
    If found → Route to `code-generator-kotlin`
 
 3. **Check for Node.js framework:**
    ```bash
-   cat package.json 2>/dev/null | grep -E '"(react|next|vue|nuxt)"'
+   grep -E '"(react|next|vue|nuxt)"' package.json 2>/dev/null
    ```
+   - **If both React and Vue found** → Prioritize React (more common), warn user
    - If "react" or "next" → Route to `code-generator-react`
    - If "vue" or "nuxt" → Route to `code-generator-vue`
 
 4. **No framework detected:**
    - Default to `code-generator-react` (most common)
-   - Warn user that React/Next.js was auto-selected
+   - Display warning message:
+     ```
+     ⚠️ No framework detected. Defaulting to React/Next.js.
+     Override with: Task(subagent_type="pb-figma:code-generator-{framework}", ...)
+     ```
+
+#### Error Handling
+
+**Detection failures:**
+- All detection commands fail → Default to React with warning
+- Detection command errors → Log error, default to React
+
+**Agent not found:**
+- Framework detected but agent unavailable → Fail with error message
+- Suggest user install missing agent or use manual override
+
+**Ambiguous detection:**
+- Multiple frameworks detected → Use priority (React > Vue > SwiftUI > Kotlin)
+- Warn user about detected alternatives
 
 #### Framework Routing
 

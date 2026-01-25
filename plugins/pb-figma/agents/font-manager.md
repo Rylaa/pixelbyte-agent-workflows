@@ -282,14 +282,18 @@ For Google Fonts, download and extract:
 
 ```bash
 # Download font family
-curl -L "https://fonts.google.com/download?family={FontFamily}" -o /tmp/{font-family}.zip
+curl -L "https://fonts.google.com/download?family={FontFamily}" -o /tmp/{FontFamily}.zip
 
-# Extract to public/fonts
-unzip -o /tmp/{font-family}.zip -d /tmp/{font-family}
+# Extract to temp directory
+unzip -o /tmp/{FontFamily}.zip -d /tmp/{FontFamily}
 
-# Copy woff2 files (preferred format)
-cp /tmp/{font-family}/static/*.woff2 public/fonts/ 2>/dev/null || \
-cp /tmp/{font-family}/*.ttf public/fonts/
+# Copy woff2/ttf files (check both static/ folder and root)
+cp /tmp/{FontFamily}/static/*.woff2 public/fonts/ 2>/dev/null || \
+cp /tmp/{FontFamily}/static/*.ttf public/fonts/ 2>/dev/null || \
+cp /tmp/{FontFamily}/*.ttf public/fonts/
+
+# Cleanup temp files
+rm -rf /tmp/{FontFamily}.zip /tmp/{FontFamily}
 ```
 
 ### Step 3: Create CSS File
@@ -340,7 +344,11 @@ Write to `src/styles/fonts.css`:
 Add to `src/styles/globals.css` or `src/app/globals.css`:
 
 ```css
+/* If globals.css is in src/styles/ */
 @import './fonts.css';
+
+/* If globals.css is in src/app/ (Next.js App Router) */
+/* @import '../styles/fonts.css'; */
 
 :root {
   --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -366,7 +374,7 @@ const inter = Inter({
   display: 'swap',
 });
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html className={inter.variable}>
       <body>{children}</body>

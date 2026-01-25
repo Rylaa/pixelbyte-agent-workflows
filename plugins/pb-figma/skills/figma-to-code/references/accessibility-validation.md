@@ -82,7 +82,26 @@ it('has no accessibility violations', async () => {
 ### Keyboard Navigation Test
 
 ```javascript
-// In browser, execute keyboard navigation
+// 1. Get tab context (ALWAYS FIRST STEP!)
+mcp__claude-in-chrome__tabs_context_mcp({
+  createIfEmpty: true
+})
+// → Save returned tabId and use for all subsequent operations
+
+// 2. Navigate to component preview
+mcp__claude-in-chrome__navigate({
+  url: "http://localhost:3000/preview?component={ComponentName}",
+  tabId: <tab-id>
+})
+
+// 3. Wait for page load
+mcp__claude-in-chrome__computer({
+  action: "wait",
+  duration: 2,
+  tabId: <tab-id>
+})
+
+// 4. Execute keyboard navigation
 mcp__claude-in-chrome__computer({
   action: "key",
   text: "Tab",
@@ -124,6 +143,13 @@ Use Claude Vision to identify:
 ### Read Accessibility Tree
 
 ```javascript
+// 1. Get tab context (ALWAYS FIRST STEP!)
+mcp__claude-in-chrome__tabs_context_mcp({
+  createIfEmpty: true
+})
+// → Save returned tabId and use for all subsequent operations
+
+// 2. Read accessibility tree
 mcp__claude-in-chrome__read_page({
   tabId: <tab-id>,
   filter: "interactive"  // Focus on interactive elements
@@ -172,7 +198,7 @@ mcp__claude-in-chrome__find({
 <img src="/hero.jpg" alt="Team collaboration in modern office" />
 
 // ✅ Good (decorative)
-<img src="/hero.jpg" alt="" role="presentation" />
+<img src="/hero.jpg" alt="" />
 ```
 
 ### Missing Form Label
@@ -200,6 +226,8 @@ mcp__claude-in-chrome__find({
 // ✅ Good - gray-600 on white ≈ 5.7:1
 <p className="text-gray-600">Muted text</p>
 ```
+
+> **Not:** Tailwind renk kontrastları versiyona göre değişebilir. Kesin doğrulama için [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/) kullanın.
 
 ### Focus Visibility
 

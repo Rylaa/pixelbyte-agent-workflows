@@ -34,6 +34,9 @@ Instead of complex tools (ImageMagick, RMSE calculation), we use Claude's visual
 │  5. FIX AND RE-CHECK                                         │
 │     └─→ Complete todos, take new screenshot if needed        │
 │                                                               │
+│  6. RESPONSIVE VALIDATION (Optional)                         │
+│     └─→ Validate tablet (768px) and mobile (375px)          │
+│                                                               │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -291,31 +294,64 @@ When all todos are complete:
 
 ---
 
-## Responsive Test (Optional)
+## Step 6: Responsive Validation (Optional but Recommended)
 
-To test at different viewport sizes:
+After desktop validation passes, validate responsive breakpoints:
 
+**Reference:** `references/responsive-validation.md`
+
+### Viewport Order
+
+1. **Desktop (1440px)** - Already validated
+2. **Tablet (768px)** - Validate next
+3. **Mobile (375px)** - Validate last
+
+### Process
+
+For each breakpoint:
+
+1. **Resize viewport**
 ```javascript
-// Change window size
 mcp__claude-in-chrome__resize_window({
-  width: 375,   // Mobile
-  height: 812,
+  width: 768,  // or 375 for mobile
+  height: 1024,
   tabId: <tab-id>
 })
+```
 
-// Take screenshot
+2. **Wait for reflow**
+```javascript
+mcp__claude-in-chrome__computer({
+  action: "wait",
+  duration: 1,
+  tabId: <tab-id>
+})
+```
+
+3. **Take screenshot**
+```javascript
 mcp__claude-in-chrome__computer({
   action: "screenshot",
   tabId: <tab-id>
 })
-
-// Return to desktop
-mcp__claude-in-chrome__resize_window({
-  width: 1440,
-  height: 900,
-  tabId: <tab-id>
-})
 ```
+
+4. **Compare with Claude Vision**
+- Check layout changes
+- Check typography scaling
+- Check component visibility
+- Check spacing adjustments
+
+5. **Create todos for differences**
+
+6. **Fix and re-check**
+
+### Skip Conditions
+
+Skip responsive validation if:
+- Figma design has only desktop frame
+- User explicitly requests desktop-only
+- Time constraints (document in report)
 
 ---
 
@@ -338,10 +374,13 @@ mcp__claude-in-chrome__read_console_messages({
 ```
 □ Tab context obtained (tabs_context_mcp)
 □ Figma screenshot taken
-□ Browser screenshot taken
+□ Browser screenshot taken (desktop)
 □ Claude Vision comparison done
 □ Differences listed with TodoWrite
 □ All todos completed
 □ Final check performed
-□ No differences → Proceed to Phase 5
+□ Desktop validation passed
+□ Tablet validation passed (optional)
+□ Mobile validation passed (optional)
+□ Proceed to Phase 5
 ```

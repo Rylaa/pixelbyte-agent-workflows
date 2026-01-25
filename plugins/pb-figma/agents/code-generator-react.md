@@ -82,6 +82,57 @@ Options:
 | Next.js + Tailwind | `react_tailwind` |
 | React (no Tailwind) | `react` |
 
+## Layer Order Parsing
+
+**CRITICAL:** Read Layer Order from Implementation Spec to determine component rendering order.
+
+**React rendering:** Array order = visual order (first element renders first/behind)
+
+**Example spec:**
+```yaml
+layerOrder:
+  - layer: PageControl (zIndex: 900)
+  - layer: HeroImage (zIndex: 500)
+  - layer: ContinueButton (zIndex: 100)
+```
+
+**Generated JSX order:**
+```tsx
+// Render in zIndex order (highest first)
+<div className="container">
+  <PageControl /> {/* zIndex 900 - renders on top */}
+  <HeroImage />   {/* zIndex 500 - middle */}
+  <Button />      {/* zIndex 100 - bottom */}
+</div>
+```
+
+**Validation:**
+1. Parse layerOrder from spec
+2. Sort by zIndex (highest first)
+3. Render components in sorted order
+4. Use absolute positioning if absoluteY is specified
+
+### Absolute Positioning
+
+When spec includes `absoluteY`, use Tailwind absolute positioning:
+
+```tsx
+// PageControl at absoluteY: 60
+<div className="absolute top-[60px] left-0 right-0 z-[900]">
+  <PageControl />
+</div>
+
+// ContinueButton at absoluteY: 800
+<button className="absolute top-[800px] left-4 right-4 z-[100]">
+  Continue
+</button>
+```
+
+**Position context mapping:**
+- `position: top` → `top-0` or `top-[absoluteY]`
+- `position: center` → `top-1/2 -translate-y-1/2`
+- `position: bottom` → `bottom-0` or `top-[absoluteY]`
+
 ## Code Generation
 
 ### For Each Component

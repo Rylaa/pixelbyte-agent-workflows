@@ -91,21 +91,19 @@ Figma URL
 
 ### Invoking the Pipeline
 
-When a Figma URL is provided, invoke agents sequentially:
+**Agent invocation order:**
 
-1. **Start:** Parse Figma URL, create report directory
-2. **Agent 1:** Dispatch `design-validator` with URL
-3. **Agent 2:** Dispatch `design-analyst` with validation report path
-4. **Agent 3:** Dispatch `asset-manager` with spec path
-5. **Agent 4:** **Detect framework and route to appropriate code generator:**
-   - Detect project framework (React/SwiftUI/Vue/Kotlin)
-   - Route to framework-specific agent:
-     - `code-generator-react` for React/Next.js
-     - `code-generator-swiftui` for SwiftUI (iOS/macOS)
-     - `code-generator-vue` for Vue/Nuxt
-     - `code-generator-kotlin` for Kotlin/Jetpack Compose
-6. **Agent 5:** Dispatch `compliance-checker` with spec and code paths
-7. **Complete:** Present Final Report to user
+1. **Design Validator** → Validates Figma URL, checks access
+2. **Design Analyst** → Creates Implementation Spec (MANDATORY)
+3. **Asset Manager** → Downloads and processes images/icons
+4. **Code Generator** (framework-specific):
+   - React: code-generator-react
+   - SwiftUI: code-generator-swiftui
+   - Vue: code-generator-vue
+   - Kotlin: code-generator-kotlin
+5. **Compliance Checker** → Validates against spec
+
+**Framework routing happens at step 4:**
 
 ### Report Directory
 
@@ -495,6 +493,20 @@ mcp__pixelbyte-figma-mcp__figma_get_code_connect_map({
   "layoutStrategy": "flex-col md:flex-row"
 }
 ```
+
+#### Phase 2 Enforcement (MANDATORY)
+
+**CRITICAL:** This phase MUST execute. Never skip to Code Generator directly.
+
+**Validation:**
+- Check spec file exists at expected path
+- Verify spec contains Layer Order section
+- If missing, halt workflow with error message
+
+**Common mistakes:**
+- ❌ Skip Phase 2 when project has existing components
+- ❌ Generate code directly from Figma API
+- ✅ ALWAYS create spec first, even for simple designs
 
 ### Phase 3: Code Generation
 

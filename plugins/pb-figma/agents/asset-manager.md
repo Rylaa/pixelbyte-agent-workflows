@@ -82,14 +82,48 @@ For each asset in the "Assets Required" table, classify the asset type and use t
 
 #### 2.1 Asset Type Classification
 
+#### Classification Procedure
+
+**Step-by-step classification using MCP tools:**
+
+1. **Get node details:**
+   ```
+   figma_get_node_details({
+     file_key: "{file_key}",
+     node_id: "{node_id}"
+   })
+   ```
+
+2. **Count vector children:**
+   ```
+   figma_find_children({
+     nodeId: "{node_id}",
+     query: { type: "VECTOR", recursive: true }
+   })
+   ```
+
+3. **Classify based on criteria:**
+   - Count vector paths from children result
+   - Check node dimensions (width, height)
+   - Check for imageRef property
+   - Apply classification table below
+
 Before downloading, determine the asset type:
 
 | Asset Type | Detection Criteria | Download Strategy |
 |------------|-------------------|-------------------|
 | **SIMPLE_ICON** | Single vector path OR <10 child vectors, typically 16-48px | SVG, scale: 1 |
-| **COMPLEX_VECTOR** | Multiple vector paths (≥10 children), charts, illustrations, >100px | PNG, scale: 2 |
+| **COMPLEX_VECTOR** | Multiple vector paths (≥10 children), charts, illustrations, >100px in both width AND height | PNG, scale: 2 |
 | **RASTER_IMAGE** | Contains image fills, photos, backgrounds | PNG/WebP, scale: 2 |
 | **IMAGE_FILL** | Node has imageRef property (photo/background) | Use figma_get_images |
+
+**Classification Priority (when node matches multiple types):**
+1. IMAGE_FILL (highest priority - has imageRef property)
+2. RASTER_IMAGE (bitmap/photo content)
+3. COMPLEX_VECTOR (≥10 vector paths)
+4. SIMPLE_ICON (lowest priority - <10 vector paths)
+
+**Example**: A node with both imageRef and vector children → Classify as IMAGE_FILL
 
 **COMPLEX_VECTOR Examples:**
 - Charts and graphs with multiple data series
@@ -161,7 +195,7 @@ figma_get_images:
 - Group by format (SVG batch, PNG batch)
 - Process synchronously to avoid rate limits
 
-### 2.1 Download from URLs
+#### 2.4 Download from URLs
 
 After `figma_export_assets` or `figma_get_images` returns URLs, download each file to local storage:
 

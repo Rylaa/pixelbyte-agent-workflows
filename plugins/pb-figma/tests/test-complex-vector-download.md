@@ -39,16 +39,19 @@ Asset Manager should:
    - For iOS: `.xcassets/ViralChartIllustration.imageset/`
    - Include Contents.json with proper metadata
 
-## Current Behavior (Bug)
+## Current State
 
-Asset Manager currently:
-- Has NO COMPLEX_VECTOR classification logic (lines 79-140)
-- Only supports:
-  - Icons (SVG, scale: 1) - line 83-90
-  - Images (PNG, scale: 2) - line 92-99
-  - Image Fills - line 101-107
-- Would incorrectly classify complex vector as "Icon" → download as SVG
-- SVG would be huge file size and render poorly
+Before this task:
+- asset-manager.md had only binary classification (SVG icons vs PNG images)
+- Complex vectors (≥10 paths) were incorrectly downloaded as SVG
+- No classification logic for multi-path illustrations
+
+After this fix (commit ada159d):
+- ✅ COMPLEX_VECTOR classification added (lines 83-127)
+- ✅ Detection criteria: ≥10 vector paths, >100px in both dimensions
+- ✅ Download strategy: PNG at 2x scale
+- ✅ File organization specified (lines 220-231)
+- ✅ Classification procedure with MCP tools documented
 
 ## Expected Output
 

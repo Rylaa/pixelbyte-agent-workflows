@@ -275,7 +275,7 @@ Text("Type a scene to generate your video")
                 Gradient.Stop(color: Color(hex: "#f4b9ea"), location: 0.2365),
                 Gradient.Stop(color: Color(hex: "#8d98ff"), location: 0.3518),
                 Gradient.Stop(color: Color(hex: "#aa6eee"), location: 0.5815),
-                Gradient.Stop(color: Color(hex: "#ff6777"), location: 0.697),
+                Gradient.Stop(color: Color(hex: "#ff6777"), location: 0.6970),
                 Gradient.Stop(color: Color(hex: "#ffba71"), location: 0.8095),
                 Gradient.Stop(color: Color(hex: "#c686ff"), location: 0.9241)
             ],
@@ -292,6 +292,22 @@ Text("Type a scene to generate your video")
 | RADIAL | `RadialGradient` | `RadialGradient(stops: [...], center: .center, startRadius: 0, endRadius: 100)` |
 | ANGULAR | `AngularGradient` | `AngularGradient(stops: [...], center: .center)` |
 | DIAMOND | `AngularGradient` | `AngularGradient(stops: [...], center: .center)` (treat as angular) |
+
+**CRITICAL: Preserve exact 4-decimal precision in gradient stop locations:**
+
+```swift
+// ❌ WRONG - Dropping trailing zero
+Gradient.Stop(color: Color(hex: "#ff6777"), location: 0.697)
+
+// ✅ CORRECT - Exact 4-decimal precision from spec
+Gradient.Stop(color: Color(hex: "#ff6777"), location: 0.6970)
+```
+
+**Rules:**
+1. **Preserve ALL gradient stops** - Every stop from Implementation Spec must appear in output
+2. **4-decimal precision** - Use exactly 4 decimal places (0.1673, not 0.17 or 0.167)
+3. **Keep trailing zeros** - 0.6970 NOT 0.697 (maintains precision from Figma)
+4. **Never round** - Use exact location values from spec
 
 **For LINEAR gradients, convert angle to startPoint/endPoint:**
 

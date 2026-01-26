@@ -5,6 +5,7 @@ tools:
   - Read
   - Write
   - Glob
+  - Bash
   - TodoWrite
   - mcp__plugin_pb-figma_pixelbyte-figma-mcp__figma_get_node_details
   - mcp__plugin_pb-figma_pixelbyte-figma-mcp__figma_get_file_structure

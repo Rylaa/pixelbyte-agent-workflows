@@ -285,6 +285,52 @@ tokens.typography.forEach(textToken => {
 - Warn if gradient has 5+ stops (performance impact)
 - Map Figma gradient type to SwiftUI equivalent
 
+#### Text Decoration Detection
+
+Extract text decoration (underline, strikethrough) from text nodes via `figma_get_node_details`:
+
+**Detection criteria:**
+- Check `textDecoration` property on TEXT nodes
+- Values: NONE, UNDERLINE, STRIKETHROUGH
+
+**For each decorated text:**
+
+1. **Extract decoration properties:**
+   ```
+   figma_get_node_details:
+     - file_key: {file_key}
+     - node_id: {text_node_id}
+
+   Read from response:
+     - textDecoration: UNDERLINE | STRIKETHROUGH
+     - decorationColor: { r, g, b, a }  # RGBA 0-1
+     - decorationThickness: number (px)
+   ```
+
+2. **Convert to hex:**
+   ```
+   decorationColor: { r: 1.0, g: 0.82, b: 0.0, a: 1.0 }
+   → #ffd100 (opacity: 1.0)
+   ```
+
+**In Implementation Spec - Add Text Decoration Section:**
+
+```markdown
+### Text Decoration
+
+**Component:** {ComponentName}
+- **Decoration:** Underline | Strikethrough
+- **Color:** #ffd100 (opacity: 1.0)
+- **Thickness:** 1.0
+
+**SwiftUI Mapping:** `.underline(color: Color(hex: "#ffd100"))` or `.strikethrough(color: Color(hex: "#color"))`
+```
+
+**Rules:**
+- Only add this section if text has decoration (textDecoration ≠ NONE)
+- Include opacity even if 1.0 for consistency
+- Default thickness: 1.0 if not specified in Figma
+
 ### 4. Asset Requirements
 
 For each asset in the inventory:

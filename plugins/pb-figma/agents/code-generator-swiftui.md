@@ -375,6 +375,109 @@ Text("Radial gradient")
 ❌ Using `.opacity()` with gradients → Applies to entire gradient uniformly
 ✅ Using hex colors with alpha channel for per-stop opacity (e.g., `#80FF0000`)
 
+##### Apply Text Decoration from Spec
+
+Read text decoration from the **"Text Decoration"** section of Implementation Spec and apply `.underline()` or `.strikethrough()` modifiers with color from spec.
+
+**Input format (Implementation Spec):**
+
+```markdown
+### Text Decoration
+
+**Component:** HookText
+- **Decoration:** Underline | Strikethrough
+- **Color:** #ffd100 (opacity: 1.0)
+- **Thickness:** 1.0
+
+**SwiftUI Mapping:** `.underline(color: Color(hex: "#ffd100"))`
+```
+
+**Example outputs:**
+
+```swift
+// Underline with custom color (iOS 16+)
+@available(iOS 16.0, *)
+struct HookText: View {
+    var body: some View {
+        Text("Hook")
+            .font(.system(size: 14, weight: .regular))
+            .underline(color: Color(hex: "#ffd100"))
+    }
+}
+
+// Strikethrough with color and opacity (iOS 16+)
+@available(iOS 16.0, *)
+struct StrikeText: View {
+    var body: some View {
+        Text("Strike")
+            .font(.system(size: 14, weight: .regular))
+            .strikethrough(color: Color(hex: "#ff0000").opacity(0.8))
+    }
+}
+
+// Basic underline without color (iOS 15 compatible)
+struct BasicUnderline: View {
+    var body: some View {
+        Text("Basic")
+            .font(.system(size: 14, weight: .regular))
+            .underline()
+    }
+}
+```
+
+**iOS version handling with fallback:**
+
+```swift
+// Option 1: iOS 16+ only (recommended for new apps)
+@available(iOS 16.0, *)
+struct HookText: View {
+    var body: some View {
+        Text("Hook")
+            .underline(color: Color(hex: "#ffd100"))
+    }
+}
+
+// Option 2: With iOS 15 fallback (for backward compatibility)
+struct HookText: View {
+    var body: some View {
+        if #available(iOS 16.0, *) {
+            Text("Hook")
+                .font(.system(size: 14, weight: .regular))
+                .underline(color: Color(hex: "#ffd100"))
+        } else {
+            Text("Hook")
+                .font(.system(size: 14, weight: .regular))
+                .underline()  // No color on iOS 15
+        }
+    }
+}
+```
+
+**Critical rules:**
+
+1. **Apply after .font() modifier** - Decoration goes after typography, never before
+2. **Use exact color from spec** - Copy hex value from "Color" field, don't approximate or use system colors
+3. **Include opacity if < 1.0** - Add `.opacity(0.8)` to Color when decoration color has opacity < 1.0
+4. **iOS 16+ API** - Add `@available(iOS 16.0, *)` when using color parameter (required)
+5. **Fallback for iOS 15** - Use `.underline()` or `.strikethrough()` without color for older iOS versions
+
+**Common mistakes:**
+
+❌ `.underline()` before `.font()` → Wrong modifier order
+✅ `.font().underline()` → Typography first, then decoration
+
+❌ `.underline(color: .yellow)` → Using system color instead of spec color
+✅ `.underline(color: Color(hex: "#ffd100"))` → Exact color from spec
+
+❌ `.underline(color: Color(hex: "#ff0000"))` when opacity is 0.8 → Missing opacity
+✅ `.underline(color: Color(hex: "#ff0000").opacity(0.8))` → Includes opacity
+
+❌ Using color parameter without `@available(iOS 16.0, *)` → Compilation error on iOS 15
+✅ Adding `@available(iOS 16.0, *)` to struct → Proper iOS version guard
+
+❌ `.underline(color: Color(hex: "#ffd100").opacity(1.0))` → Unnecessary .opacity()
+✅ `.underline(color: Color(hex: "#ffd100"))` → No modifier when opacity = 1.0
+
 ##### Use Proper View Structure
 
 Ensure proper SwiftUI View protocol implementation:

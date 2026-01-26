@@ -362,31 +362,30 @@ const nodeDetails = figma_get_node_details({
   node_id: "{node_id}"
 });
 
-// Error handling: Check for valid children and absoluteBoundingBox
-const validChildren = nodeDetails.children?.filter(child =>
-  child.absoluteBoundingBox?.y !== undefined
-) || [];
-
-// Sort by Y coordinate (top to bottom)
-const sortedChildren = validChildren.sort((a, b) =>
-  a.absoluteBoundingBox.y - b.absoluteBoundingBox.y
-);
-
-// Assign z-index values (higher = on top)
-const layerOrder = sortedChildren.map((child, index) => ({
+// Use Figma children array order (NOT Y coordinate)
+// children[0] = back layer (lowest in Figma layer panel)
+// children[n-1] = front layer (highest in Figma layer panel)
+const layerOrder = nodeDetails.children.map((child, index) => ({
   layer: child.name,
-  zIndex: 1000 - (index * 100),  // Top element gets highest zIndex
-  position: determinePosition(child.absoluteBoundingBox.y, containerHeight),
-  absoluteY: child.absoluteBoundingBox.y,
+  zIndex: (index + 1) * 100,  // First child = 100, last child = highest
+  position: determinePosition(child.absoluteBoundingBox?.y, containerHeight),
+  absoluteY: child.absoluteBoundingBox?.y,
   children: child.children?.map(c => c.name) || []
 }));
 ```
 
-**Error Handling:**
-- Check that nodeDetails.children exists before sorting
-- Filter children to only include those with absoluteBoundingBox property
-- Skip nodes where absoluteBoundingBox is null or undefined
-- This prevents runtime errors for certain Figma node types
+**Why children array order, not Y coordinate?**
+
+Figma's layer panel order != Y coordinate order. Overlay elements can have ANY Y coordinate but MUST render on top based on layer panel position.
+
+**Example:**
+- Background: Y=0 (full screen) + Layer Panel BOTTOM → zIndex 100
+- PageControl: Y=60 (top of screen) + Layer Panel TOP → zIndex 300
+
+If sorted by Y: Background gets zIndex 1000 ❌ WRONG
+Using array order: Background (index 0) gets zIndex 100, PageControl (index 2) gets zIndex 300 ✅ CORRECT
+
+**Critical:** Always use children array order for accurate layer hierarchy.
 
 **Position Context Determination:**
 
@@ -471,29 +470,29 @@ Write Implementation Spec to: `docs/figma-reports/{file_key}-spec.md`
 **Format:**
 ```yaml
 layerOrder:
-  - layer: StatusBar
-    zIndex: 1000
-    position: top
+  - layer: Background
+    zIndex: 100         # First child in Figma (index 0)
+    position: full
     absoluteY: 0
     children: []
 
+  - layer: HeroImage
+    zIndex: 200         # Second child in Figma (index 1)
+    position: center
+    absoluteY: 300
+    children: []
+
   - layer: PageControl
-    zIndex: 900
-    position: top-below-status
+    zIndex: 300         # Third child in Figma (index 2)
+    position: top
     absoluteY: 60
     children:
       - Dot1
       - Dot2
       - Dot3
 
-  - layer: HeroImage
-    zIndex: 500
-    position: center
-    absoluteY: 300
-    children: []
-
   - layer: ContinueButton
-    zIndex: 100
+    zIndex: 400         # Fourth child in Figma (index 3)
     position: bottom
     absoluteY: 800
     children: []

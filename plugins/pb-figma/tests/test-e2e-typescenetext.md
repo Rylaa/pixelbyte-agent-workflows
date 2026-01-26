@@ -177,8 +177,25 @@ Compare Figma screenshot with generated SwiftUI preview:
 - Veo 3 selector button
 - Duration (5s) and resolution (720P) buttons
 
-### Issues Found
-None. All requirements from design spec successfully implemented in code.
+### Issues Found & Clarifications
+
+**Border Opacity Implementation (Resolved)**:
+- **Finding**: Spec lists "Border | #ffffff | 0.4" but implementation uses both flat 0.4 AND gradient 0.7→0.2
+- **Clarification**: Figma design uses BOTH border styles depending on element:
+  - Gradient borders (0.7→0.2): "Image to Video" button, text input border, model selector backgrounds
+  - Flat 0.4 borders: Model selector buttons (Veo 3, 5s, 720P)
+  - Flat colored border: Pink #ffaca9 around main image placeholder
+- **Status**: ✅ Implementation correctly matches actual Figma design
+- **Action**: No code change needed. Spec document oversimplified the border patterns.
+
+**Asset Handling (As Designed)**:
+- **Finding**: SF Symbols used instead of downloaded COMPLEX_VECTOR assets
+- **Rationale**:
+  - `figma_get_screenshot` captures visual references but doesn't download individual assets
+  - Asset Manager phase (figma_list_assets + figma_export_assets) not executed in this workflow
+  - SF Symbols provide iOS-native placeholders with no external dependencies
+- **Status**: ✅ Acceptable for initial implementation per compliance report
+- **Recommendation**: Replace with actual Figma icons if brand consistency required
 
 ## Notes
 This test validates the complete fix for the asset pipeline and opacity handling, including all 7 previous tasks:

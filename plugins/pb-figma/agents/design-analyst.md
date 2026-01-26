@@ -231,29 +231,57 @@ Add to Implementation Spec if detected:
 
 #### Gradient Detection
 
-Extract gradient fills from text nodes via `figma_get_design_tokens`:
+Extract gradient fills from text nodes via `figma_get_node_details`:
 
 **Query Pattern:**
 ```typescript
-const tokens = figma_get_design_tokens({
+const nodeDetails = figma_get_node_details({
   file_key: "{file_key}",
-  node_id: "{node_id}",
-  include_typography: true
+  node_id: "{node_id}"
 });
 
-// Extract gradients from typography tokens
-tokens.typography.forEach(textToken => {
-  if (textToken.gradient) {
-    // Document gradient in Implementation Spec
-  }
-});
+// Check if node has gradient fills
+const gradientFill = nodeDetails.fills?.find(fill =>
+  fill.type?.includes('GRADIENT')
+);
+
+if (gradientFill) {
+  // Map Figma gradient type to output format
+  const gradientTypeMap = {
+    'GRADIENT_LINEAR': 'LINEAR',
+    'GRADIENT_RADIAL': 'RADIAL',
+    'GRADIENT_ANGULAR': 'ANGULAR',
+    'GRADIENT_DIAMOND': 'DIAMOND'
+  };
+
+  const gradientType = gradientTypeMap[gradientFill.type] || gradientFill.type;
+
+  // Extract ALL gradient stops with EXACT positions (4 decimals)
+  const stops = gradientFill.gradientStops.map(stop => {
+    // Convert RGB (0-1 floats) to hex
+    const r = Math.round(stop.color.r * 255);
+    const g = Math.round(stop.color.g * 255);
+    const b = Math.round(stop.color.b * 255);
+    const hex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+
+    // Extract opacity (default to 1.0 if not present)
+    const opacity = stop.color.a ?? 1.0;
+
+    // Round position to 4 decimal places (NOT 2!)
+    const position = Math.round(stop.position * 10000) / 10000;
+
+    return { position, hex, opacity };
+  });
+
+  // Document ALL stops in Implementation Spec
+}
 ```
 
 **Gradient Types from Figma:**
-- `LINEAR` - Linear gradient with angle
-- `RADIAL` - Radial gradient from center
-- `ANGULAR` - Conic/angular gradient (rainbow effect)
-- `DIAMOND` - Diamond-shaped gradient
+- `GRADIENT_LINEAR` → `LINEAR` - Linear gradient with angle
+- `GRADIENT_RADIAL` → `RADIAL` - Radial gradient from center
+- `GRADIENT_ANGULAR` → `ANGULAR` - Conic/angular gradient (rainbow effect)
+- `GRADIENT_DIAMOND` → `DIAMOND` - Diamond-shaped gradient
 
 **In Implementation Spec - Add Gradient Section:**
 
@@ -289,11 +317,16 @@ tokens.typography.forEach(textToken => {
 ```
 
 **Gradient extraction rules:**
-- Text node with `gradient` field → Add "Text with Gradient" section
-- Include ALL gradient stops with position, color, opacity
+- **Always use `figma_get_node_details`** (NOT `figma_get_design_tokens`) to get fills array
+- Check `fills[].type` for gradient types: GRADIENT_LINEAR, GRADIENT_RADIAL, GRADIENT_ANGULAR, GRADIENT_DIAMOND
+- Extract **ALL** gradient stops from `gradientStops` array (no truncation)
+- **Preserve EXACT position values** - Round to 4 decimal places (0.1673, NOT 0.17)
+- Convert RGB colors (0-1 floats) to hex format (#bc82f3)
+- Extract opacity from `stop.color.a` (default to 1.0 if missing)
+- Include opacity for EVERY stop: `0.1673: #bc82f3 (opacity: 1.0)`
 - Add platform requirement (iOS 15+) to Compliance section
 - Warn if gradient has 5+ stops (performance impact)
-- Map Figma gradient type to SwiftUI equivalent
+- Map Figma gradient type to SwiftUI equivalent (GRADIENT_ANGULAR → AngularGradient)
 
 #### Text Decoration Detection
 

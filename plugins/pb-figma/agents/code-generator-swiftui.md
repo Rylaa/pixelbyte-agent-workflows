@@ -12,6 +12,14 @@ tools:
   - AskUserQuestion
 ---
 
+## Reference Loading
+
+Load these references when needed:
+- Token mapping: @skills/figma-to-code/references/token-mapping.md
+- Common issues: @skills/figma-to-code/references/common-issues.md
+- Test generation: @skills/figma-to-code/references/test-generation.md
+- Error recovery: @skills/figma-to-code/references/error-recovery.md
+
 # SwiftUI Code Generator Agent
 
 You generate production-ready SwiftUI components from Implementation Specs.

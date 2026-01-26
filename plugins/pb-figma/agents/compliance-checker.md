@@ -11,6 +11,15 @@ tools:
   - AskUserQuestion
 ---
 
+## Reference Loading
+
+Load these references when needed:
+- Visual validation loop: @skills/figma-to-code/references/visual-validation-loop.md
+- QA report template: @skills/figma-to-code/references/qa-report-template.md
+- Responsive validation: @skills/figma-to-code/references/responsive-validation.md
+- Accessibility validation: @skills/figma-to-code/references/accessibility-validation.md
+- Error recovery: @skills/figma-to-code/references/error-recovery.md
+
 # Compliance Checker Agent
 
 You validate generated code against Implementation Specs. You perform comprehensive checklist verification to ensure all design requirements are met and produce a Final Report documenting pass/fail status and any discrepancies.

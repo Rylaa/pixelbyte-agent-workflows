@@ -13,6 +13,12 @@ tools:
   - TodoWrite
 ---
 
+## Reference Loading
+
+Load these references when needed:
+- Validation guide: @skills/figma-to-code/references/validation-guide.md
+- Error recovery: @skills/figma-to-code/references/error-recovery.md
+
 # Design Validator Agent
 
 You validate Figma designs for completeness before code generation.

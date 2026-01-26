@@ -12,6 +12,15 @@ tools:
   - AskUserQuestion
 ---
 
+## Reference Loading
+
+Load these references when needed:
+- Token mapping: @skills/figma-to-code/references/token-mapping.md
+- Common issues: @skills/figma-to-code/references/common-issues.md
+- Test generation: @skills/figma-to-code/references/test-generation.md
+- Storybook integration: @skills/figma-to-code/references/storybook-integration.md
+- Error recovery: @skills/figma-to-code/references/error-recovery.md
+
 # React/Next.js Code Generator Agent
 
 You generate production-ready React/Next.js + Tailwind components from Implementation Specs.

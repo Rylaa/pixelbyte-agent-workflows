@@ -11,6 +11,13 @@ tools:
   - mcp__plugin_pb-figma_pixelbyte-figma-mcp__figma_get_file_structure
 ---
 
+## Reference Loading
+
+Load these references when needed:
+- Code Connect guide: @skills/figma-to-code/references/code-connect-guide.md
+- Mapping planning prompt: @skills/figma-to-code/references/prompts/mapping-planning.md
+- Error recovery: @skills/figma-to-code/references/error-recovery.md
+
 # Design Analyst Agent
 
 You analyze Validation Reports and produce Implementation Specs for developers. You act as a Business Analyst, translating design information into actionable development requirements.

@@ -2,6 +2,18 @@
 
 All notable changes to the pb-figma plugin will be documented in this file.
 
+## [1.5.0] - 2026-01-27
+
+### Added
+- Documentation index (`docs-index.md`) for lazy-loading references
+- Reference loading sections in all agents
+
+### Changed
+- Reduced SKILL.md from 1000 lines to ~150 lines (estimated 60-70% reduction in initial context loading)
+- Moved DOM flattening rules to code-generator-base.md
+- Moved TODO comment strategy to code-generator-base.md
+- Agents now load references on-demand instead of upfront
+
 ## [1.4.3] - 2026-01-27
 
 ### Fixed

@@ -78,9 +78,35 @@ Directory purposes:
 
 ### 2. Download Assets
 
-For each asset in the "Assets Required" table:
+For each asset in the "Assets Required" table, classify the asset type and use the appropriate download strategy.
 
-#### Icons (SVG format)
+#### 2.1 Asset Type Classification
+
+Before downloading, determine the asset type:
+
+| Asset Type | Detection Criteria | Download Strategy |
+|------------|-------------------|-------------------|
+| **SIMPLE_ICON** | Single vector path OR <10 child vectors, typically 16-48px | SVG, scale: 1 |
+| **COMPLEX_VECTOR** | Multiple vector paths (≥10 children), charts, illustrations, >100px | PNG, scale: 2 |
+| **RASTER_IMAGE** | Contains image fills, photos, backgrounds | PNG/WebP, scale: 2 |
+| **IMAGE_FILL** | Node has imageRef property (photo/background) | Use figma_get_images |
+
+**COMPLEX_VECTOR Examples:**
+- Charts and graphs with multiple data series
+- Illustrations with many individual vector elements
+- Decorative graphics with complex nested structures
+- Icons that are actually small illustrations (>10 paths)
+
+**Why PNG for COMPLEX_VECTOR:**
+- Complex SVGs can have huge file sizes (many path elements)
+- Rendering performance issues in browsers/apps
+- Difficult to style or modify individual elements
+- Better as optimized raster at target resolution
+
+#### 2.2 Download by Asset Type
+
+##### Simple Icons (SVG format)
+For icons with simple paths (<10 vectors):
 ```
 figma_export_assets:
   - file_key: {file_key}
@@ -89,7 +115,8 @@ figma_export_assets:
   - scale: 1
 ```
 
-#### Images (PNG/WebP format)
+##### Complex Vectors (PNG format)
+For charts, illustrations, complex graphics (≥10 vector paths):
 ```
 figma_export_assets:
   - file_key: {file_key}
@@ -98,7 +125,19 @@ figma_export_assets:
   - scale: 2
 ```
 
-#### Image Fills (Photos, backgrounds)
+**Note:** Complex vectors should be downloaded as PNG at 2x scale for optimal file size and rendering performance. SVG format would result in large files with many path elements that are difficult to optimize.
+
+##### Raster Images (PNG/WebP format)
+For images with raster content:
+```
+figma_export_assets:
+  - file_key: {file_key}
+  - node_ids: [{node_id}]
+  - format: png
+  - scale: 2
+```
+
+##### Image Fills (Photos, backgrounds)
 For assets with image fills, use:
 ```
 figma_get_images:
@@ -106,11 +145,21 @@ figma_get_images:
   - node_id: {node_id}
 ```
 
-**Download Strategy:**
-- Batch similar assets together to minimize API calls
-- Process icons first (typically smaller, faster)
-- Process images second (may require higher resolution)
-- Handle image fills separately (different API endpoint)
+#### 2.3 Download Strategy
+
+**Asset Processing Order:**
+1. **Classify first** - Determine asset type (SIMPLE_ICON, COMPLEX_VECTOR, RASTER_IMAGE, IMAGE_FILL)
+2. **Batch by type** - Group similar assets to minimize API calls
+3. **Process order:**
+   - Simple icons (SVG) - typically smaller, faster
+   - Complex vectors (PNG) - may require higher resolution
+   - Raster images (PNG/WebP) - larger files
+   - Image fills (separate API) - different endpoint
+
+**Batching Rules:**
+- Batch up to 10 assets per API call
+- Group by format (SVG batch, PNG batch)
+- Process synchronously to avoid rate limits
 
 ### 2.1 Download from URLs
 
@@ -168,15 +217,18 @@ Move validated assets to their final locations:
 
 | Asset Type | Source | Destination |
 |------------|--------|-------------|
-| Icons (SVG) | Download location | `public/assets/icons/{filename}.svg` |
-| Images (PNG) | Download location | `public/assets/images/{filename}.png` |
-| Images (WebP) | Download location | `public/assets/images/{filename}.webp` |
+| Simple Icons (SVG) | Download location | `public/assets/icons/{filename}.svg` |
+| Complex Vectors (PNG) | Download location | `public/assets/images/{filename}.png` |
+| Raster Images (PNG) | Download location | `public/assets/images/{filename}.png` |
+| Raster Images (WebP) | Download location | `public/assets/images/{filename}.webp` |
 | Bundled assets | Download location | `src/assets/{filename}.{ext}` |
 
 **Naming Conventions:**
 - Use kebab-case for all filenames
-- Prefix icons with `icon-` if not already prefixed
+- Prefix simple icons with `icon-` if not already prefixed
+- Prefix complex vectors with descriptive name: `chart-growth.png`, `illustration-hero.png`
 - Include size suffix for multiple resolutions: `hero-image-2x.png`
+- Distinguish complex vectors from icons: Use semantic names (chart, graph, illustration) not `icon-`
 
 ### 5. Update Spec
 

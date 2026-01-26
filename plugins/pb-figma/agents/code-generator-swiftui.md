@@ -188,6 +188,9 @@ When Implementation Spec includes Opacity column:
 
 *Note: Examples below use `Color(hex:)` which requires a custom extension. See Task 5 for Color+Hex extension implementation. Alternatively, use standard SwiftUI: `Color(red:green:blue:).opacity(X)`*
 
+**Two patterns for opacity application:**
+
+**Pattern 1: Color-level opacity** (for borders, fills, text colors)
 ```swift
 // Border with opacity from spec
 RoundedRectangle(cornerRadius: 12)
@@ -202,6 +205,26 @@ Text(title)
     .foregroundColor(Color(hex: "#333333").opacity(0.9))
 ```
 
+**Pattern 2: View-level opacity** (for gradients, overlays, entire elements)
+```swift
+// Gradient overlay with opacity applied to entire view
+RadialGradient(
+    gradient: Gradient(stops: [
+        .init(color: Color(hex: "#f02912"), location: 0.0),
+        .init(color: Color(hex: "#150200"), location: 1.0)
+    ]),
+    center: .center,
+    startRadius: 0,
+    endRadius: 200
+)
+.opacity(0.2)
+
+// Shape overlay with opacity
+RoundedRectangle(cornerRadius: 24)
+    .fill(Color.blue)
+    .opacity(0.5)
+```
+
 **CRITICAL RULES:**
 
 1. **Primary source: Usage column** - Copy the ready-to-use SwiftUI code shown in Usage column
@@ -210,14 +233,21 @@ Text(title)
 4. **When opacity is 1.0** - Usage column won't include `.opacity()` modifier (SwiftUI default)
 5. **When opacity is 0.0** - Element is fully transparent (invisible). Verify this is intentional or add TODO comment
 
-**Common mistake to avoid:**
+**Common mistakes to avoid:**
 
 ```swift
-// ❌ WRONG - Ignoring opacity from spec
+// ❌ WRONG - Ignoring Color-level opacity from spec
 .stroke(Color.white, lineWidth: 1.0)
 
-// ✅ CORRECT - Applying opacity from spec
+// ✅ CORRECT - Applying Color-level opacity from spec
 .stroke(Color.white.opacity(0.4), lineWidth: 1.0)
+
+// ❌ WRONG - Ignoring view-level opacity from spec
+RadialGradient(...)
+
+// ✅ CORRECT - Applying view-level opacity from spec
+RadialGradient(...)
+    .opacity(0.2)
 ```
 
 ##### Apply Gradients from Spec

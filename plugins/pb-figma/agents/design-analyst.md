@@ -182,7 +182,7 @@ const tokens = figma_get_design_tokens({
 // Extract opacity from tokens
 tokens.colors.forEach(colorToken => {
   if (colorToken.opacity && colorToken.opacity < 1.0) {
-    // Document in Implementation Spec
+    // Add to "Design Tokens" table with Opacity column and `.opacity(X)` in Usage
   }
 });
 ```
@@ -212,10 +212,12 @@ Add to Implementation Spec if detected:
 ```
 
 **Opacity extraction rules:**
-- `opacity: 1.0` → Don't add opacity modifier (default)
-- `opacity: 0.0 - 0.99` → Add opacity column and usage example
-- Border/stroke opacity < 0.8 → Add warning
-- Text opacity < 1.0 → Add warning
+- **Always include Opacity column** in Design Tokens table for all colors
+- `opacity: 1.0` → Omit `.opacity()` modifier in Usage column (default SwiftUI behavior)
+- `opacity: 0.01 - 0.99` → Include `.opacity(X)` modifier in Usage column
+- `opacity: 0.0` → Element is fully transparent (invisible) - verify this is intentional
+- Border/stroke opacity < 0.8 → Add warning to Design Warnings section
+- Text opacity < 1.0 → Add warning to Design Warnings section
 
 ### 4. Asset Requirements
 

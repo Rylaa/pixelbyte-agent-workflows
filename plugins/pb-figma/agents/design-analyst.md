@@ -131,6 +131,33 @@ For each component, identify:
 
 **WARNING:** Never assign a trailing checkmark icon as a card's thematic icon. The spec MUST use LEADING icons for card action representation.
 
+#### Asset Children Marking
+
+**CRITICAL:** When a component contains children that are in the "Assets Required" table, mark them explicitly in the Component output.
+
+**Format:** `IMAGE:asset-name:NodeID:width:height`
+
+**Process:**
+1. For each component, check if any children match Node IDs in Assets Required table
+2. If match found, add to Asset Children property with format above
+3. Include dimensions from Figma node
+
+**Example:**
+
+Assets Required table:
+| Asset | Filename | Node ID | Size |
+|-------|----------|---------|------|
+| Clock Icon | icon-clock.svg | 3:230 | 32x32 |
+| Growth Chart | growth-chart.png | 6:32 | 354x132 |
+
+Component output:
+| Property | Value |
+|----------|-------|
+| **Children** | IconFrame, TitleText, CheckmarkIcon |
+| **Asset Children** | `IMAGE:icon-clock:3:230:32:32`, `IMAGE:growth-chart:6:32:354:132` |
+
+**Note:** Asset Children tells code-generator to use `Image("asset-name")` instead of generating code for that node.
+
 #### Icon Parent Hierarchy Validation (CRITICAL)
 
 Before assigning ANY icon to a card, perform these validation checks:
@@ -766,6 +793,7 @@ layerOrder:
 | **Classes/Styles** | Full Tailwind class string |
 | **Props/Variants** | List of props or variant states |
 | **Children** | Child component names |
+| **Asset Children** | `IMAGE:asset-name:NodeID` format list |
 | **Notes** | Implementation considerations |
 
 #### Variants

@@ -49,7 +49,9 @@ For each node and its children, verify:
 - [ ] Colors extracted (fills, strokes)
 - [ ] Typography defined (font family, size, weight, line-height)
 - [ ] Spacing values captured (padding, gap, margins)
-- [ ] Border radius values present
+- [ ] **Frame dimensions extracted** (width, height for all containers)
+- [ ] **Corner radius values extracted** (individual corners if different)
+- [ ] **Border/stroke properties extracted** (color, width, opacity)
 - [ ] Effects documented (shadows, blurs)
 
 ### 3. Assets
@@ -58,6 +60,58 @@ For each node and its children, verify:
 - [ ] Vectors identified (if any)
 - [ ] Export settings checked
 - [ ] **Duplicate-named icons classified** (if multiple icons share same name)
+
+### 3.5 Frame Properties Extraction
+
+**CRITICAL:** Extract frame properties for ALL container nodes (FRAME, COMPONENT, INSTANCE types).
+
+**Query Pattern:**
+```typescript
+const nodeDetails = figma_get_node_details({
+  file_key: "{file_key}",
+  node_id: "{container_node_id}"
+});
+
+// Extract frame dimensions
+const width = nodeDetails.absoluteBoundingBox?.width;
+const height = nodeDetails.absoluteBoundingBox?.height;
+
+// Extract corner radius (can be uniform or per-corner)
+const cornerRadius = nodeDetails.cornerRadius;  // Uniform
+const topLeftRadius = nodeDetails.rectangleCornerRadii?.[0];
+const topRightRadius = nodeDetails.rectangleCornerRadii?.[1];
+const bottomRightRadius = nodeDetails.rectangleCornerRadii?.[2];
+const bottomLeftRadius = nodeDetails.rectangleCornerRadii?.[3];
+
+// Extract strokes
+const strokes = nodeDetails.strokes?.map(stroke => ({
+  color: stroke.color,  // { r, g, b, a }
+  opacity: stroke.opacity ?? 1.0
+}));
+const strokeWeight = nodeDetails.strokeWeight;
+const strokeAlign = nodeDetails.strokeAlign;  // INSIDE, OUTSIDE, CENTER
+```
+
+**Frame Properties Table in Validation Report:**
+
+```markdown
+## Frame Properties
+
+| Node ID | Node Name | Width | Height | Corner Radius | Border |
+|---------|-----------|-------|--------|---------------|--------|
+| 3:217 | OnboardingCard | 393 | 568 | 24px (uniform) | none |
+| 3:230 | ChecklistItem | 361 | 80 | 12px (uniform) | 1px #FFFFFF40 inside |
+| 3:306 | GrowthSection | 361 | 180 | 16px (TL/TR), 0 (BL/BR) | none |
+```
+
+**Corner Radius Format:**
+- Uniform: `16px (uniform)`
+- Per-corner: `16px (TL/TR), 8px (BL/BR)` or `TL:16 TR:16 BL:8 BR:8`
+
+**Border Format:**
+- `{width}px {color}{opacity} {align}`
+- Example: `1px #FFFFFF40 inside` (1px white at 40% opacity, inside stroke)
+- No border: `none`
 
 ### 4. Missing Data Resolution
 If any data is unclear or missing:

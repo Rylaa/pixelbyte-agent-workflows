@@ -2,6 +2,27 @@
 
 All notable changes to the pb-figma plugin will be documented in this file.
 
+## [1.9.0] - 2026-01-28
+
+### Added
+- **Frame Properties Extraction** - Design Validator extracts dimensions, cornerRadius, and border/stroke from all container nodes
+- **Frame Properties Spec Format** - Design Analyst includes width, height, cornerRadius, border in component property tables
+- **Frame Properties Application** - Code Generator SwiftUI applies `.frame()`, `.clipShape()`, `.overlay(.stroke())` modifiers
+- **Per-Corner Radius Support** - UnevenRoundedRectangle (iOS 16+) and RoundedCorner custom Shape (iOS 15) for non-uniform corners
+- **Color+Hex Extension** - Swift extension for initializing Color from hex strings
+- **RoundedCorner Shape** - Custom Shape for per-corner radius on iOS 15
+
+### Changed
+- Design Validator checklist includes frame dimensions, corner radius, border/stroke items
+- Design Analyst component property table extended with Dimensions, Corner Radius, Border columns
+- Code Generator SwiftUI process includes "Build Frame Properties Map" step
+- Compliance Checker design tokens checklist includes frame properties verification
+
+### Fixed
+- Cell sizes now match Figma design specifications exactly
+- Corner radius values properly extracted and applied (uniform and per-corner)
+- Border/stroke color, width, and alignment preserved from Figma
+
 ## [1.8.0] - 2026-01-27
 
 ### Added

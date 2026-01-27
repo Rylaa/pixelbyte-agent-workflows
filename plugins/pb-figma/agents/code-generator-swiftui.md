@@ -201,6 +201,100 @@ If asset was in "Flagged for LLM Review" and decided as DOWNLOAD_AS_IMAGE:
 - Add `.clipped()` to prevent overflow
 - Consider adding `.cornerRadius()` if parent has border radius
 
+### Complete Example
+
+**Implementation Spec Input:**
+
+```markdown
+## Components
+
+### ChecklistItemView
+
+| Property | Value |
+|----------|-------|
+| **Element** | HStack |
+| **Layout** | horizontal, spacing: 16 |
+| **Children** | IconFrame, ContentStack, CheckmarkIcon |
+| **Asset Children** | `IMAGE:icon-clock:3:230:32:32`, `IMAGE:checkmark:3:295:24:24` |
+
+### GrowthSectionView
+
+| Property | Value |
+|----------|-------|
+| **Element** | VStack |
+| **Layout** | vertical, spacing: 8 |
+| **Children** | TitleText, ChartIllustration |
+| **Asset Children** | `IMAGE:growth-chart:6:32:354:132` |
+
+## Downloaded Assets
+
+| Asset | Local Path | Fill Type | Template Compatible |
+|-------|------------|-----------|---------------------|
+| icon-clock | Assets.xcassets/icon-clock | #F2F20D | No - use .original |
+| checkmark | Assets.xcassets/checkmark | none | Yes - use .template |
+| growth-chart | Assets.xcassets/growth-chart | N/A (PNG) | N/A |
+```
+
+**Generated SwiftUI Code:**
+
+```swift
+struct ChecklistItemView: View {
+    let title: String
+    let subtitle: String
+    let isCompleted: Bool
+
+    var body: some View {
+        HStack(spacing: 16) {
+            // Asset: icon-clock (from Asset Children)
+            Image("icon-clock")
+                .resizable()
+                .renderingMode(.original)
+                .frame(width: 32, height: 32)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.headline)
+                Text(subtitle)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+
+            Spacer()
+
+            // Asset: checkmark (from Asset Children)
+            Image("checkmark")
+                .resizable()
+                .renderingMode(.template)
+                .foregroundColor(.viralYellow)
+                .frame(width: 24, height: 24)
+        }
+    }
+}
+
+struct GrowthSectionView: View {
+    var body: some View {
+        VStack(spacing: 8) {
+            Text("PROJECTED GROWTH")
+                .font(.caption)
+                .foregroundColor(.secondary)
+
+            // Asset: growth-chart (from Asset Children, ILLUSTRATION)
+            Image("growth-chart")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(maxWidth: 354)
+                .clipped()
+        }
+    }
+}
+```
+
+**Key Points:**
+1. Asset Children parsed → Image() calls generated
+2. renderingMode from Downloaded Assets table
+3. Icon (≤64px) uses fixed frame, Illustration uses aspectRatio
+4. Template-compatible assets get foregroundColor
+
 ## Layer Order Parsing
 
 **CRITICAL:** Read Layer Order from Implementation Spec to determine ZStack ordering.

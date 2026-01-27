@@ -71,6 +71,51 @@ If any data is unclear or missing:
 - [ ] Large vector groups (>50px, ≥3 children) marked as illustrations
 - [ ] Illustrations NOT classified as icons
 
+### 6. Illustration Complexity Detection
+
+**Purpose:** Flag frames that may be illustrations requiring LLM vision analysis.
+
+**Complexity Triggers (if ANY match → flag for LLM review):**
+
+| Trigger | Detection Method | Example |
+|---------|------------------|---------|
+| **Shadow + Color Siblings** | Frame has 2+ child frames where one has dark fills (#000-#444) and another has bright fills | Growth chart: 6:34 (black) + 6:38 (yellow) |
+| **Multiple Opacity Fills** | Frame children have same color but 3+ different opacity values | Bars: 0.2, 0.4, 0.6, 0.8, 1.0 |
+| **Gradient Overlay** | Vector child with gradient ending in opacity 0 | Trend arrow: white@10% → white@0% |
+| **High Vector Count** | Frame contains >10 VECTOR type descendants | Complex illustration with many paths |
+| **Deep Nesting** | Frame nesting depth > 3 levels | Frame > Frame > Frame > Frame |
+
+**Detection Process:**
+
+```
+For each frame in Assets Required:
+1. Query frame details: figma_get_node_details(file_key, node_id)
+2. Check children count and types
+3. For each trigger:
+   a. Shadow+Color: Query sibling fills, check luminosity difference
+   b. Multiple Opacity: Collect opacity values from children fills
+   c. Gradient Overlay: Check for gradient with opacity → 0 stop
+   d. Vector Count: Count VECTOR type descendants
+   e. Deep Nesting: Track frame depth recursively
+4. If ANY trigger matches:
+   → Add to "Flagged for LLM Review" list
+   → Include trigger reason
+```
+
+**Output Format:**
+
+Add to Validation Report:
+
+```markdown
+## Flagged for LLM Review
+
+| Node ID | Name | Trigger | Reason |
+|---------|------|---------|--------|
+| 6:32 | GrowthSection | Shadow+Color Siblings | Children 6:34 (dark) and 6:38 (bright) detected |
+| 6:32 | GrowthSection | Multiple Opacity | 5 opacity values: 0.2, 0.4, 0.6, 0.8, 1.0 |
+| 6:32 | GrowthSection | Gradient Overlay | Child 6:44 has transparent gradient |
+```
+
 ## Status Determination
 
 Determine final validation status based on these criteria:

@@ -2,6 +2,22 @@
 
 All notable changes to the pb-figma plugin will be documented in this file.
 
+## [1.7.0] - 2026-01-27
+
+### Added
+- **Illustration Detection** - Complexity-based triggers identify potential illustrations (≥15 descendant nodes, ≥5 unique colors, ≥3 gradients)
+- **LLM Vision Analysis** - Asset Manager uses Claude Vision to analyze flagged frames and determine if they are illustrations
+- **Flagged Frame Reading** - Asset Manager reads illustration flags from implementation spec
+- **Dark+Bright Sibling Detection** - Design Validator detects dark/bright color pairs that may indicate overlays
+- **Multiple Opacity Detection** - Design Validator identifies nodes with multiple opacity values applied
+- **Gradient Overlay Detection** - Design Validator detects gradient fills that may be overlay effects
+- **Flag Preservation** - Design Analyst preserves flagged illustration frames in implementation spec
+
+### Changed
+- Design Validator now includes illustration complexity analysis in validation report
+- Asset Manager classification enhanced with LLM-assisted illustration detection
+- Design Analyst spec output includes `flaggedForIllustrationReview` field
+
 ## [1.6.0] - 2026-01-27
 
 ### Fixed

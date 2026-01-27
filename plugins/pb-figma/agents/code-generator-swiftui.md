@@ -289,7 +289,7 @@ For each component in "## Components" section:
 )
 ```
 
-### Complete Example
+### Complete Example with Frame Properties
 
 **Implementation Spec Input:**
 
@@ -302,6 +302,10 @@ For each component in "## Components" section:
 |----------|-------|
 | **Element** | HStack |
 | **Layout** | horizontal, spacing: 16 |
+| **Dimensions** | `width: 361, height: 80` |
+| **Corner Radius** | `12px` |
+| **Border** | `1px #FFFFFF opacity:0.4 inside` |
+| **Background** | `#150200` |
 | **Children** | IconFrame, ContentStack, CheckmarkIcon |
 | **Asset Children** | `IMAGE:icon-clock:3:230:32:32`, `IMAGE:checkmark:3:295:24:24` |
 
@@ -311,21 +315,37 @@ For each component in "## Components" section:
 |----------|-------|
 | **Element** | VStack |
 | **Layout** | vertical, spacing: 8 |
+| **Dimensions** | `width: 361, height: 180` |
+| **Corner Radius** | `TL:16 TR:16 BL:0 BR:0` |
+| **Border** | `none` |
 | **Children** | TitleText, ChartIllustration |
 | **Asset Children** | `IMAGE:growth-chart:6:32:354:132` |
+
+## Design Tokens
+
+### Colors
+
+| Property | Color | Opacity | Usage |
+|----------|-------|---------|-------|
+| Border | #FFFFFF | 0.4 | `.stroke(Color.white.opacity(0.4))` |
+| Background | #150200 | 1.0 | `.background(Color(hex: "#150200"))` |
+| Title | #FFFFFF | 1.0 | `.foregroundColor(.white)` |
+| Subtitle | #CCCCCC | 0.6 | `.foregroundColor(Color(hex: "#CCCCCC").opacity(0.6))` |
 
 ## Downloaded Assets
 
 | Asset | Local Path | Fill Type | Template Compatible |
 |-------|------------|-----------|---------------------|
-| icon-clock | Assets.xcassets/icon-clock | #F2F20D | No - use .original |
-| checkmark | Assets.xcassets/checkmark | none | Yes - use .template |
-| growth-chart | Assets.xcassets/growth-chart | N/A (PNG) | N/A |
+| icon-clock | Assets.xcassets/icon-clock.imageset | #F2F20D | No - use .original |
+| checkmark | Assets.xcassets/checkmark.imageset | none | Yes - use .template |
+| growth-chart | Assets.xcassets/growth-chart.imageset | N/A (PNG) | N/A |
 ```
 
 **Generated SwiftUI Code:**
 
 ```swift
+import SwiftUI
+
 struct ChecklistItemView: View {
     let title: String
     let subtitle: String
@@ -342,20 +362,32 @@ struct ChecklistItemView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.headline)
+                    .foregroundColor(.white)  // From Design Tokens
+
                 Text(subtitle)
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(Color(hex: "#CCCCCC").opacity(0.6))  // From Design Tokens
             }
 
             Spacer()
 
             // Asset: checkmark (from Asset Children)
-            Image("checkmark")
-                .resizable()
-                .renderingMode(.template)
-                .foregroundColor(.viralYellow)
-                .frame(width: 24, height: 24)
+            if isCompleted {
+                Image("checkmark")
+                    .resizable()
+                    .renderingMode(.template)
+                    .foregroundColor(.viralYellow)
+                    .frame(width: 24, height: 24)
+            }
         }
+        .padding(.horizontal, 16)
+        .frame(width: 361, height: 80)  // From Dimensions
+        .background(Color(hex: "#150200"))  // From Design Tokens
+        .clipShape(RoundedRectangle(cornerRadius: 12))  // From Corner Radius
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.white.opacity(0.4), lineWidth: 1)  // From Border
+        )
     }
 }
 
@@ -373,15 +405,44 @@ struct GrowthSectionView: View {
                 .frame(maxWidth: 354)
                 .clipped()
         }
+        .frame(width: 361, height: 180)  // From Dimensions
+        .clipShape(  // From Corner Radius (per-corner)
+            UnevenRoundedRectangle(
+                topLeadingRadius: 16,
+                bottomLeadingRadius: 0,
+                bottomTrailingRadius: 0,
+                topTrailingRadius: 16
+            )
+        )
+    }
+}
+
+// MARK: - Required Extensions
+
+extension Color {
+    init(hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        let a, r, g, b: UInt64
+        switch hex.count {
+        case 3: (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+        case 6: (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        case 8: (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+        default: (a, r, g, b) = (255, 0, 0, 0)
+        }
+        self.init(.sRGB, red: Double(r) / 255, green: Double(g) / 255, blue: Double(b) / 255, opacity: Double(a) / 255)
     }
 }
 ```
 
 **Key Points:**
-1. Asset Children parsed → Image() calls generated
-2. renderingMode from Downloaded Assets table
-3. Icon (≤64px) uses fixed frame, Illustration uses aspectRatio
-4. Template-compatible assets get foregroundColor
+1. `Dimensions` → `.frame(width: 361, height: 80)`
+2. `Corner Radius` → `.clipShape(RoundedRectangle(cornerRadius: 12))` or `UnevenRoundedRectangle` for per-corner
+3. `Border` → `.overlay(RoundedRectangle().stroke())`
+4. `Design Tokens` → Copy Usage column directly
+5. `Asset Children` → `Image()` calls with correct renderingMode
+6. Include `Color+Hex` extension when using hex colors
 
 ## Layer Order Parsing
 

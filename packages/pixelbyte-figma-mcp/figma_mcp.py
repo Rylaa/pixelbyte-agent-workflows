@@ -1097,6 +1097,47 @@ def _is_icon_frame(node: Dict[str, Any]) -> bool:
     return has_icon_pattern or (is_icon_size and has_vector_children)
 
 
+def _is_chart_or_illustration(node: Dict[str, Any]) -> bool:
+    """Detect if a node is likely a chart or illustration (not an icon).
+
+    Uses heuristics to identify charts/illustrations:
+    1. Has exportSettings configured (designer marked it for export)
+    2. Larger than typical icon size (>50px in either dimension)
+    3. Has multiple children (complex structure)
+
+    Args:
+        node: The node to check
+
+    Returns:
+        True if the node appears to be a chart or illustration
+    """
+    # If has exportSettings, it's likely a chart/illustration
+    if node.get('exportSettings'):
+        return True
+
+    # Check size - charts are typically larger than icons
+    abs_box = node.get('absoluteBoundingBox', {})
+    width = abs_box.get('width', 0)
+    height = abs_box.get('height', 0)
+
+    # Charts are usually >50px and have aspect ratio > 1.5:1 or < 1:1.5
+    is_large = width > 50 or height > 50
+
+    # Count children - charts typically have multiple elements
+    children = node.get('children', [])
+    child_count = len(children)
+
+    # Count vector children
+    vector_types = {'VECTOR', 'RECTANGLE', 'ELLIPSE', 'LINE', 'BOOLEAN_OPERATION'}
+    vector_count = sum(1 for c in children if c.get('type') in vector_types)
+
+    # Chart heuristic: large frame with multiple vector children
+    if is_large and child_count >= 3 and vector_count >= 2:
+        return True
+
+    return False
+
+
 def _collect_all_assets(
     node: Dict[str, Any],
     file_key: str,

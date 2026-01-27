@@ -5793,7 +5793,8 @@ async def figma_list_assets(params: FigmaListAssetsInput) -> str:
             params.file_key,
             assets,
             include_icons=params.include_icons,
-            include_vectors=params.include_vectors
+            include_vectors=params.include_vectors,
+            include_exports=params.include_exports
         )
 
         # Filter based on params

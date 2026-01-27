@@ -1102,7 +1102,8 @@ def _collect_all_assets(
     file_key: str,
     assets: Dict[str, List],
     include_icons: bool = True,
-    include_vectors: bool = False
+    include_vectors: bool = False,
+    include_exports: bool = True  # NEW: Add parameter
 ) -> None:
     """Recursively collect all assets from a node tree with smart icon detection.
 
@@ -1116,6 +1117,7 @@ def _collect_all_assets(
         assets: Dict to accumulate assets into (modified in place)
         include_icons: Whether to detect and collect icon frames
         include_vectors: Whether to collect raw vector nodes
+        include_exports: Whether to collect nodes with export settings
     """
     node_id = node.get('id', '')
     node_name = node.get('name', 'Unnamed')
@@ -1133,7 +1135,20 @@ def _collect_all_assets(
                 'filters': img.get('filters')
             })
 
+    # FIX: Check for export settings FIRST (before icon detection)
+    # This ensures nodes with exportSettings are always collected
+    export_settings = _extract_export_settings(node)
+    has_export_settings = bool(export_settings)
+
+    if include_exports and has_export_settings:
+        assets['exports'].append({
+            'nodeId': node_id,
+            'nodeName': node_name,
+            'settings': export_settings
+        })
+
     # Smart icon detection - if this is an icon frame, add it and DON'T recurse
+    # Note: exportSettings already collected above, so early return is safe
     if include_icons and _is_icon_frame(node):
         abs_box = node.get('absoluteBoundingBox', {})
         assets['icons'].append({
@@ -1157,18 +1172,9 @@ def _collect_all_assets(
                 'hasPath': bool(vector_paths.get('fillGeometry') or vector_paths.get('strokeGeometry'))
             })
 
-    # Check for export settings
-    export_settings = _extract_export_settings(node)
-    if export_settings:
-        assets['exports'].append({
-            'nodeId': node_id,
-            'nodeName': node_name,
-            'settings': export_settings
-        })
-
     # Recurse into children
     for child in node.get('children', []):
-        _collect_all_assets(child, file_key, assets, include_icons, include_vectors)
+        _collect_all_assets(child, file_key, assets, include_icons, include_vectors, include_exports)
 
 
 def _extract_vector_paths(node: Dict[str, Any]) -> Optional[Dict[str, Any]]:

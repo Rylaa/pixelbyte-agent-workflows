@@ -191,6 +191,61 @@ Result: TRIGGER MATCHED
 Record: "Multiple Opacity: 5 values [0.2, 0.4, 0.6, 0.8, 1.0] on color #f2f20d"
 ```
 
+#### 6.3 Gradient Overlay Detection Algorithm
+
+**Algorithm:**
+
+```
+1. For each child in frame children:
+   a. Query child details: figma_get_node_details(file_key, child.id)
+   b. Check if child type is "VECTOR"
+   c. Check if child has fills with fillType "GRADIENT_LINEAR", "GRADIENT_RADIAL", or "GRADIENT_ANGULAR"
+   d. For each gradient fill, examine stops:
+      - Look for any stop with opacity < 0.1 (approaching transparent)
+      - Look for another stop with opacity > 0.05
+   e. If gradient fades to near-transparent:
+      → TRIGGER: Gradient Overlay
+      → Record gradient details
+```
+
+**Fade Pattern Detection:**
+
+```
+Gradient indicates decorative overlay when:
+- Has at least 2 stops
+- One stop has opacity >= 0.05 (visible)
+- Another stop has opacity < 0.1 (near-transparent)
+- Creates "fade out" effect typical of decorative overlays
+```
+
+**Example:**
+
+```
+Frame 6:32 child 6:44 (VECTOR type):
+
+figma_get_node_details response:
+{
+  "type": "VECTOR",
+  "fills": [{
+    "fillType": "GRADIENT_LINEAR",
+    "gradient": {
+      "stops": [
+        {"position": 0.0, "color": "#ffffff", "opacity": 0.1},
+        {"position": 1.0, "color": "#ffffff", "opacity": 0.0}
+      ]
+    }
+  }]
+}
+
+Analysis:
+- Stop 1: white with 10% opacity (visible)
+- Stop 2: white with 0% opacity (transparent)
+- Gradient fades from 10% to 0%
+
+Result: TRIGGER MATCHED
+Record: "Gradient Overlay: 6:44 fades white from 10% to 0% opacity"
+```
+
 **Detection Process:**
 
 ```

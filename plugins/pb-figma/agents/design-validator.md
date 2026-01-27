@@ -95,6 +95,55 @@ Luminosity formula: (R + G + B) / 3 / 255
 
 **Note:** If a frame matches multiple triggers, list each trigger on a separate row.
 
+#### 6.1 Dark+Bright Sibling Detection Algorithm
+
+**Algorithm:**
+
+```
+1. Get frame children list from figma_get_node_details response
+2. For each pair of sibling frames (A, B):
+   a. Query A's children fills → extract hex colors
+   b. Query B's children fills → extract hex colors
+   c. Calculate luminosity for each fill:
+      - luminosity = (R + G + B) / 3 / 255
+      - DARK if luminosity < 0.27 (hex range #000000-#444444)
+      - BRIGHT if luminosity > 0.5 AND saturation > 20%
+   d. If A has DARK fills and B has BRIGHT fills (or vice versa):
+      → TRIGGER: Dark+Bright Siblings
+      → Record: "Dark frame: {A.id}, Bright frame: {B.id}"
+```
+
+**Luminosity Calculation (pseudocode):**
+
+```python
+def is_dark(hex_color):
+    hex_color = hex_color.lstrip('#')
+    r, g, b = int(hex_color[0:2], 16), int(hex_color[2:4], 16), int(hex_color[4:6], 16)
+    luminosity = (r + g + b) / 3 / 255
+    return luminosity < 0.27
+
+def is_bright(hex_color):
+    hex_color = hex_color.lstrip('#')
+    r, g, b = int(hex_color[0:2], 16), int(hex_color[2:4], 16), int(hex_color[4:6], 16)
+    luminosity = (r + g + b) / 3 / 255
+    max_c, min_c = max(r, g, b), min(r, g, b)
+    saturation = (max_c - min_c) / 255 if max_c > 0 else 0
+    return luminosity > 0.5 and saturation > 0.2
+```
+
+**Example:**
+
+```
+Frame 6:32 children: [6:33, 6:34, 6:38, 6:44]
+
+Check 6:34 vs 6:38:
+- 6:34 children fills: #3c3c3c (luminosity: 0.24) → DARK ✓
+- 6:38 children fills: #f2f20d (luminosity: 0.65, saturation: 0.90) → BRIGHT ✓
+- Result: TRIGGER MATCHED
+
+Record: "Dark+Bright Siblings: 6:34 (dark) paired with 6:38 (bright)"
+```
+
 **Detection Process:**
 
 ```

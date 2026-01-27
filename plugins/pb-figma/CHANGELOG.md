@@ -2,6 +2,16 @@
 
 All notable changes to the pb-figma plugin will be documented in this file.
 
+## [1.9.1] - 2026-01-28
+
+### Fixed
+- **Compliance Checker** - Added SwiftUI-specific verification patterns for `.frame()`, `.clipShape()`, `.overlay()`, and color tokens
+- **Hex-Alpha Parsing** - Documented `#RRGGBBAA` format conversion (e.g., `#FFFFFF40` → 0.25 opacity)
+- **CENTER Stroke Alignment** - Added SwiftUI pattern using `.inset(by:)` modifier
+- **Corner Radius Terminology** - Added mapping table: Figma TL/TR/BL/BR → SwiftUI topLeading/topTrailing/bottomLeading/bottomTrailing
+- **Dimension Rules** - Clarified when to use `width:` vs `maxWidth:` in `.frame()` modifier
+- **Modifier Ordering** - Documented correct sequence: padding→frame→background→clipShape→overlay→shadow
+
 ## [1.9.0] - 2026-01-28
 
 ### Added

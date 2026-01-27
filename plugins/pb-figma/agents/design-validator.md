@@ -66,6 +66,11 @@ If any data is unclear or missing:
 3. Use `figma_get_styles` for published styles
 4. Document what could NOT be resolved
 
+### 5. Illustrations & Charts
+- [ ] Nodes with exportSettings identified
+- [ ] Large vector groups (>50px, ≥3 children) marked as illustrations
+- [ ] Illustrations NOT classified as icons
+
 ## Status Determination
 
 Determine final validation status based on these criteria:
@@ -163,12 +168,13 @@ Write to: `docs/figma-reports/{file_key}-validation.md`
 | shadow-sm | drop-shadow | 0 1px 2px rgba(0,0,0,0.05) |
 
 ## Assets Inventory
-| Asset | Type | Node ID | Export Format | Position | Icon Type |
-|-------|------|---------|---------------|----------|-----------|
-| logo | image | 1:234 | SVG | - | - |
-| hero-bg | image | 1:567 | PNG | - | - |
-| card-icon-1 | icon | 1:890 | SVG | leading | THEMATIC |
-| card-check-1 | icon | 1:891 | SVG | trailing | STATUS_INDICATOR |
+| Asset | Type | Node ID | Export Format | Position | Icon Type | Has Export Settings |
+|-------|------|---------|---------------|----------|-----------|---------------------|
+| logo | image | 1:234 | SVG | - | - | No |
+| hero-bg | image | 1:567 | PNG | - | - | No |
+| bar-chart | illustration | 6:34 | PNG | - | - | Yes |
+| card-icon-1 | icon | 1:890 | SVG | leading | THEMATIC | No |
+| card-check-1 | icon | 1:891 | SVG | trailing | STATUS_INDICATOR | No |
 
 ## Node Hierarchy
 ```

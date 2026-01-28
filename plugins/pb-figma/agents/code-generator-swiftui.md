@@ -763,6 +763,36 @@ For each entry in component's Asset Children:
 - Asset Children order matches visual order (left-to-right, top-to-bottom)
 - First Asset Child = first in HStack/top in VStack
 
+#### Image-with-Text Handling
+
+When an Asset Children entry includes `[contains-text: "..."]` annotation:
+
+1. **Do NOT** generate a separate `Text()` view for the contained text
+2. **Do** use the text content as `accessibilityLabel` for the `Image()` view
+3. **Do** add a code comment explaining the text is embedded in the image
+
+**Example:**
+
+Spec input:
+```
+**Asset Children** | `IMAGE:growth-chart:6:32:354:132 [contains-text: "PROJECTED GROWTH"]`
+```
+
+Generated code:
+```swift
+// "PROJECTED GROWTH" text is embedded in the growth-chart image asset
+Image("growth-chart")
+    .resizable()
+    .aspectRatio(contentMode: .fit)
+    .frame(maxWidth: .infinity)
+    .accessibilityLabel("PROJECTED GROWTH chart showing upward trend")
+```
+
+**NOT generated** (suppressed):
+```swift
+Text("PROJECTED GROWTH")  // ← This would duplicate text in image
+```
+
 #### 2. Enhance with SwiftUI Specifics
 
 Take the MCP-generated code and enhance it with SwiftUI patterns:

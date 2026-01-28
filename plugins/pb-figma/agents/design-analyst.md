@@ -672,8 +672,10 @@ const fontSize = nodeDetails.style?.fontSize;
 const lineHeightPx = nodeDetails.style?.lineHeightPx;
 const lineHeight = lineHeightPx || (fontSize * 1.2); // fallback
 
-// Approximate line count
-const lineCountHint = Math.floor(frameHeight / lineHeight);
+// Approximate line count (only for HEIGHT or TRUNCATE modes)
+const lineCountHint = (textAutoResize === "HEIGHT" || textAutoResize === "TRUNCATE")
+  ? Math.floor(frameHeight / lineHeight)
+  : undefined;
 ```
 
 **Implementation Spec Output:**

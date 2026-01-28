@@ -46,6 +46,139 @@ Use `TodoWrite` to track code generation progress through these steps:
 7. **Write Component Files** - Save to React project structure
 8. **Update Spec with Results** - Add Generated Code table and next agent input
 
+## Asset Node Map
+
+**CRITICAL:** Before generating code, build a map of asset nodes that should become `<Image>` or `<img>` tags.
+
+### Step 1: Parse Asset Children from Spec
+
+Read all components and extract Asset Children entries:
+
+```
+For each component in "## Components" section:
+  Read "Asset Children" property
+  Parse format: IMAGE:asset-name:NodeID:width:height
+  Add to assetNodeMap: { nodeId: { name, width, height } }
+```
+
+**Example assetNodeMap:**
+```json
+{
+  "3:230": { "name": "icon-clock", "width": 32, "height": 32 },
+  "6:32": { "name": "hero-illustration", "width": 400, "height": 300 }
+}
+```
+
+### Step 2: Read Downloaded Assets for Image Type
+
+Cross-reference with "## Downloaded Assets" table:
+
+| Asset | Local Path | Type | Next.js Optimized |
+|-------|------------|------|-------------------|
+| icon-clock | public/assets/icon-clock.svg | SVG | Yes - use next/image |
+| hero-illustration | public/assets/hero.png | PNG | Yes - use next/image |
+
+### Step 3: During Code Generation
+
+**CRITICAL:** When generating code for a component:
+
+1. Check if component contains any node IDs from assetNodeMap
+2. For asset nodes, DO NOT call figma_generate_code
+3. Instead, generate appropriate image code:
+
+**For Next.js projects:**
+```tsx
+// Asset node 3:230 → Generate Image component
+import Image from 'next/image';
+
+<Image
+  src="/assets/icon-clock.svg"
+  alt="Clock icon"
+  width={32}
+  height={32}
+/>
+```
+
+**For React (non-Next.js) projects:**
+```tsx
+// Use standard img tag
+<img
+  src="/assets/icon-clock.svg"
+  alt="Clock icon"
+  width={32}
+  height={32}
+  className="w-8 h-8"
+/>
+```
+
+### Image Generation Patterns
+
+**For Icons (small, typically ≤ 64px):**
+```tsx
+// Next.js
+<Image
+  src="/assets/{asset-name}.svg"
+  alt="{descriptive alt}"
+  width={width}
+  height={height}
+  className="w-{tailwind} h-{tailwind}"
+/>
+
+// React
+<img
+  src="/assets/{asset-name}.svg"
+  alt="{descriptive alt}"
+  className="w-{tailwind} h-{tailwind}"
+/>
+```
+
+**For Illustrations (larger images > 64px):**
+```tsx
+// Next.js with priority loading
+<Image
+  src="/assets/{asset-name}.png"
+  alt="{descriptive alt}"
+  width={width}
+  height={height}
+  priority={isAboveFold}
+  className="object-cover"
+/>
+
+// React with lazy loading
+<img
+  src="/assets/{asset-name}.png"
+  alt="{descriptive alt}"
+  loading="lazy"
+  className="w-full h-auto object-cover"
+/>
+```
+
+### Icon Component Patterns
+
+**For SVG icons with color control, use lucide-react or inline SVG:**
+
+```tsx
+// Option 1: lucide-react (recommended)
+import { Clock } from 'lucide-react';
+<Clock className="w-8 h-8 text-primary" />
+
+// Option 2: Inline SVG component
+import ClockIcon from '@/assets/icons/clock.svg';
+<ClockIcon className="w-8 h-8 fill-current text-primary" />
+
+// Option 3: SVG as img (no color control)
+<img src="/assets/clock.svg" alt="Clock" className="w-8 h-8" />
+```
+
+**When to use each pattern:**
+
+| Pattern | Use When |
+|---------|----------|
+| next/image | PNG/JPG images, illustrations, photos |
+| lucide-react | Common UI icons (check, arrow, menu, etc.) |
+| SVG component | Custom icons needing color control |
+| img tag | Simple icons without color control |
+
 ## Framework Detection
 
 ### Detect React/Next.js

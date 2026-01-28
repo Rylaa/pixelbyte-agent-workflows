@@ -131,18 +131,27 @@ Add rendering mode to assetNodeMap:
 
 ### Step 3: During Code Generation
 
-**CRITICAL:** When generating code for a component:
+When generating code for a component:
 
 1. Check if component contains any node IDs from assetNodeMap
 2. For asset nodes, DO NOT call figma_generate_code
-3. Instead, generate Image() code directly:
+3. Instead, generate Image() code directly
 
+**MCP vs Manual Image() Generation Decision:**
+
+| Scenario | Approach | Reason |
+|----------|----------|--------|
+| Component with no assets | Use MCP `figma_generate_code` | MCP handles layout and styling |
+| Asset node (icon/illustration) | Generate Image() manually | MCP cannot access downloaded assets |
+| Component containing assets | Use MCP for container, insert Image() for assets | Hybrid approach |
+
+**Example - Manual Image() for asset node:**
 ```swift
-// Asset node 3:230 → Generate Image() instead of MCP code
+// Asset node 3:230 → Generate Image() manually (not via MCP)
 Image("icon-clock")
-    .resizable()
-    .renderingMode(.original)
-    .frame(width: 32, height: 32)
+  .resizable()
+  .renderingMode(.original)
+  .frame(width: 32, height: 32)
 ```
 
 ### Image() Generation Template
@@ -150,17 +159,17 @@ Image("icon-clock")
 **For Icons (small, typically < 64px):**
 ```swift
 Image("{asset-name}")
-    .resizable()
-    .renderingMode({renderingMode})  // .original or .template
-    .frame(width: {width}, height: {height})
+  .resizable()
+  .renderingMode({renderingMode})  // .original or .template
+  .frame(width: {width}, height: {height})
 ```
 
 **For Illustrations (larger images):**
 ```swift
 Image("{asset-name}")
-    .resizable()
-    .aspectRatio(contentMode: .fit)
-    .frame(width: {width}, height: {height})
+  .resizable()
+  .aspectRatio(contentMode: .fit)
+  .frame(width: {width}, height: {height})
 ```
 
 **Rendering Mode Rules:**
@@ -172,29 +181,12 @@ Image("{asset-name}")
 
 ### Illustration vs Icon Detection
 
-Determine asset type from dimensions:
+Determine asset type from dimensions and apply the corresponding template from above:
 
-| Dimension | Type | Image() Pattern |
-|-----------|------|-----------------|
-| width ≤ 64 AND height ≤ 64 | ICON | `.frame(width:height:)` fixed size |
-| width > 64 OR height > 64 | ILLUSTRATION | `.aspectRatio(contentMode:)` flexible |
-
-**Icon Pattern:**
-```swift
-Image("icon-clock")
-    .resizable()
-    .renderingMode(.original)
-    .frame(width: 32, height: 32)
-```
-
-**Illustration Pattern:**
-```swift
-Image("growth-chart")
-    .resizable()
-    .aspectRatio(contentMode: .fit)
-    .frame(maxWidth: 354)  // Use maxWidth for flexibility
-    .clipped()
-```
+| Dimension | Type | Use Template |
+|-----------|------|--------------|
+| width ≤ 64 AND height ≤ 64 | ICON | "For Icons" template with fixed `.frame(width:height:)` |
+| width > 64 OR height > 64 | ILLUSTRATION | "For Illustrations" template with `.aspectRatio()` |
 
 **Flagged Illustrations:**
 If asset was in "Flagged for LLM Review" and decided as DOWNLOAD_AS_IMAGE:
@@ -230,21 +222,21 @@ When generating code for a component that contains a flagged illustration:
 ```swift
 // ❌ WRONG - Duplicates text that's in the image
 VStack(spacing: 8) {
-    Text("PROJECTED GROWTH")  // This text is already in the image!
-        .font(.caption)
+  Text("PROJECTED GROWTH")  // This text is already in the image!
+    .font(.caption)
 
-    Image("growth-chart")
-        .resizable()
-        .aspectRatio(contentMode: .fit)
+  Image("growth-chart")
+    .resizable()
+    .aspectRatio(contentMode: .fit)
 }
 
 // ✅ CORRECT - Image contains the text, no duplication
 VStack(spacing: 8) {
-    Image("growth-chart")  // Image already has "PROJECTED GROWTH" text
-        .resizable()
-        .aspectRatio(contentMode: .fit)
-        .frame(maxWidth: 354)
-        .accessibilityLabel("Projected Growth chart showing upward trend")
+  Image("growth-chart")  // Image already has "PROJECTED GROWTH" text
+    .resizable()
+    .aspectRatio(contentMode: .fit)
+    .frame(maxWidth: 354)
+    .accessibilityLabel("Projected Growth chart showing upward trend")
 }
 ```
 
@@ -303,24 +295,24 @@ For each component being generated:
 
 ```swift
 struct GrowthSectionView: View {
-    var body: some View {
-        VStack(spacing: 8) {
-            // TitleText SKIPPED - text "PROJECTED GROWTH" embedded in image
+  var body: some View {
+    VStack(spacing: 8) {
+      // TitleText SKIPPED - text "PROJECTED GROWTH" embedded in image
 
-            // Asset: growth-chart (flagged illustration with embedded text)
-            Image("growth-chart")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(maxWidth: 354)
-                .accessibilityLabel("Projected Growth chart")
-        }
+      // Asset: growth-chart (flagged illustration with embedded text)
+      Image("growth-chart")
+        .resizable()
+        .aspectRatio(contentMode: .fit)
+        .frame(maxWidth: 354)
+        .accessibilityLabel("Projected Growth chart")
     }
+  }
 }
 ```
 
 ## Frame Properties Map
 
-**CRITICAL:** Extract frame properties from each component to apply correct modifiers.
+Extract frame properties from each component to apply correct modifiers.
 
 ### Step 1: Parse Frame Properties from Spec
 
@@ -399,35 +391,36 @@ For each component in "## Components" section:
 ```swift
 // From spec: Corner Radius: TL:16 TR:16 BL:0 BR:0
 .clipShape(
-    UnevenRoundedRectangle(
-        topLeadingRadius: 16,
-        bottomLeadingRadius: 0,
-        bottomTrailingRadius: 0,
-        topTrailingRadius: 16
-    )
+  UnevenRoundedRectangle(
+    topLeadingRadius: 16,
+    bottomLeadingRadius: 0,
+    bottomTrailingRadius: 0,
+    topTrailingRadius: 16
+  )
 )
 ```
 
-**CRITICAL - Corner Radius Terminology Mapping:**
+**Corner Radius Terminology Mapping:**
 
-Figma uses geometric corners (TopLeft, TopRight), SwiftUI uses reading direction (Leading, Trailing):
+Figma uses geometric corners (TopLeft, TopRight), SwiftUI uses reading direction (Leading, Trailing).
+Table order matches Swift's API signature:
 
-| Figma/Spec | SwiftUI Parameter | Position |
-|------------|-------------------|----------|
-| TL (TopLeft) | `topLeadingRadius` | Top-left corner |
-| TR (TopRight) | `topTrailingRadius` | Top-right corner |
-| BL (BottomLeft) | `bottomLeadingRadius` | Bottom-left corner |
-| BR (BottomRight) | `bottomTrailingRadius` | Bottom-right corner |
+| Swift Parameter (in API order) | Figma/Spec | Position |
+|-------------------------------|------------|----------|
+| `topLeadingRadius` | TL (TopLeft) | Top-left corner |
+| `bottomLeadingRadius` | BL (BottomLeft) | Bottom-left corner |
+| `bottomTrailingRadius` | BR (BottomRight) | Bottom-right corner |
+| `topTrailingRadius` | TR (TopRight) | Top-right corner |
 
 **Example conversion:**
 ```
 Spec: "TL:16 TR:16 BL:0 BR:0"
 ↓
 UnevenRoundedRectangle(
-    topLeadingRadius: 16,     // TL
-    bottomLeadingRadius: 0,   // BL
-    bottomTrailingRadius: 0,  // BR
-    topTrailingRadius: 16     // TR
+  topLeadingRadius: 16,     // TL=16
+  bottomLeadingRadius: 0,   // BL=0
+  bottomTrailingRadius: 0,  // BR=0
+  topTrailingRadius: 16     // TR=16
 )
 ```
 
@@ -441,20 +434,20 @@ UnevenRoundedRectangle(
 
 **Hex-Alpha Color Parsing:**
 
-When spec shows `#RRGGBBAA` format (8 characters), the last 2 hex digits are alpha:
+The Color+Hex extension uses ARGB format for 8-character hex strings (alpha first):
 ```
-#FFFFFF40 → Color: #FFFFFF, Alpha: 0x40 = 64/255 = 0.25 opacity
-#FF000080 → Color: #FF0000, Alpha: 0x80 = 128/255 = 0.50 opacity
-#00FF00FF → Color: #00FF00, Alpha: 0xFF = 255/255 = 1.0 opacity
+#40FFFFFF → Alpha: 0x40 = 64/255 = 0.25 opacity, Color: #FFFFFF (white)
+#80FF0000 → Alpha: 0x80 = 128/255 = 0.50 opacity, Color: #FF0000 (red)
+#FF00FF00 → Alpha: 0xFF = 1.0 opacity, Color: #00FF00 (green)
 ```
 
 **SwiftUI conversion:**
 ```swift
-// Spec: "#FFFFFF40" → separate color and opacity
-Color(hex: "#FFFFFF").opacity(0.25)  // 0x40/255 = 0.25
+// For opacity < 1.0, use .opacity() modifier (more readable)
+Color(hex: "#FFFFFF").opacity(0.25)
 
-// OR use 8-char hex directly with Color+Hex extension
-Color(hex: "#FFFFFF40")  // Extension handles ARGB format
+// Or use ARGB format with 8-char hex
+Color(hex: "#40FFFFFF")  // Extension parses as ARGB: alpha=0x40, RGB=FFFFFF
 ```
 
 **Stroke Alignment Patterns:**
@@ -468,22 +461,22 @@ Color(hex: "#FFFFFF40")  // Extension handles ARGB format
 ```swift
 // INSIDE stroke (default - stroke inside bounds)
 .overlay(
-    RoundedRectangle(cornerRadius: 12)
-        .stroke(Color.white.opacity(0.4), lineWidth: 1)
+  RoundedRectangle(cornerRadius: 12)
+    .stroke(Color.white.opacity(0.4), lineWidth: 1)
 )
 
 // OUTSIDE stroke (stroke outside bounds)
 .padding(1)  // Half of stroke width
 .overlay(
-    RoundedRectangle(cornerRadius: 12)
-        .stroke(Color.white.opacity(0.4), lineWidth: 2)
+  RoundedRectangle(cornerRadius: 12)
+    .stroke(Color.white.opacity(0.4), lineWidth: 2)
 )
 
 // CENTER stroke (stroke centered on edge)
 .overlay(
-    RoundedRectangle(cornerRadius: 12)
-        .inset(by: 0.5)  // Half of stroke width
-        .stroke(Color.white.opacity(0.4), lineWidth: 1)
+  RoundedRectangle(cornerRadius: 12)
+    .inset(by: 0.5)  // Half of stroke width
+    .stroke(Color.white.opacity(0.4), lineWidth: 1)
 )
 ```
 
@@ -545,93 +538,78 @@ Color(hex: "#FFFFFF40")  // Extension handles ARGB format
 import SwiftUI
 
 struct ChecklistItemView: View {
-    let title: String
-    let subtitle: String
-    let isCompleted: Bool
+  let title: String
+  let subtitle: String
+  let isCompleted: Bool
 
-    var body: some View {
-        HStack(spacing: 16) {
-            // Asset: icon-clock (from Asset Children)
-            Image("icon-clock")
-                .resizable()
-                .renderingMode(.original)
-                .frame(width: 32, height: 32)
+  var body: some View {
+    HStack(spacing: 16) {
+      // Asset: icon-clock (from Asset Children)
+      Image("icon-clock")
+        .resizable()
+        .renderingMode(.original)
+        .frame(width: 32, height: 32)
 
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .font(.headline)
-                    .foregroundColor(.white)  // From Design Tokens
+      VStack(alignment: .leading, spacing: 4) {
+        Text(title)
+          .font(.headline)
+          .foregroundColor(.white)  // From Design Tokens
 
-                Text(subtitle)
-                    .font(.subheadline)
-                    .foregroundColor(Color(hex: "#CCCCCC").opacity(0.6))  // From Design Tokens
-            }
+        Text(subtitle)
+          .font(.subheadline)
+          .foregroundColor(Color(hex: "#CCCCCC").opacity(0.6))  // From Design Tokens
+      }
 
-            Spacer()
+      Spacer()
 
-            // Asset: checkmark (from Asset Children)
-            if isCompleted {
-                Image("checkmark")
-                    .resizable()
-                    .renderingMode(.template)
-                    .foregroundColor(.viralYellow)
-                    .frame(width: 24, height: 24)
-            }
-        }
-        .padding(.horizontal, 16)
-        .frame(width: 361, height: 80)  // From Dimensions
-        .background(Color(hex: "#150200"))  // From Design Tokens
-        .clipShape(RoundedRectangle(cornerRadius: 12))  // From Corner Radius
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.white.opacity(0.4), lineWidth: 1)  // From Border
-        )
+      // Asset: checkmark (from Asset Children)
+      if isCompleted {
+        Image("checkmark")
+          .resizable()
+          .renderingMode(.template)
+          .foregroundColor(.viralYellow)
+          .frame(width: 24, height: 24)
+      }
     }
+    .padding(.horizontal, 16)
+    .frame(width: 361, height: 80)  // From Dimensions
+    .background(Color(hex: "#150200"))  // From Design Tokens
+    .clipShape(RoundedRectangle(cornerRadius: 12))  // From Corner Radius
+    .overlay(
+      RoundedRectangle(cornerRadius: 12)
+        .stroke(Color.white.opacity(0.4), lineWidth: 1)  // From Border
+    )
+  }
 }
 
 struct GrowthSectionView: View {
-    var body: some View {
-        VStack(spacing: 8) {
-            Text("PROJECTED GROWTH")
-                .font(.caption)
-                .foregroundColor(.secondary)
+  var body: some View {
+    VStack(spacing: 8) {
+      Text("PROJECTED GROWTH")
+        .font(.caption)
+        .foregroundColor(.secondary)
 
-            // Asset: growth-chart (from Asset Children, ILLUSTRATION)
-            Image("growth-chart")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(maxWidth: 354)
-                .clipped()
-        }
-        .frame(width: 361, height: 180)  // From Dimensions
-        .clipShape(  // From Corner Radius (per-corner)
-            UnevenRoundedRectangle(
-                topLeadingRadius: 16,
-                bottomLeadingRadius: 0,
-                bottomTrailingRadius: 0,
-                topTrailingRadius: 16
-            )
-        )
+      // Asset: growth-chart (from Asset Children, ILLUSTRATION)
+      Image("growth-chart")
+        .resizable()
+        .aspectRatio(contentMode: .fit)
+        .frame(maxWidth: 354)
+        .clipped()
     }
+    .frame(width: 361, height: 180)  // From Dimensions
+    .clipShape(  // From Corner Radius (per-corner)
+      UnevenRoundedRectangle(
+        topLeadingRadius: 16,
+        bottomLeadingRadius: 0,
+        bottomTrailingRadius: 0,
+        topTrailingRadius: 16
+      )
+    )
+  }
 }
 
 // MARK: - Required Extensions
-
-extension Color {
-    init(hex: String) {
-        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&int)
-        let a, r, g, b: UInt64
-        switch hex.count {
-        case 3: (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6: (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8: (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
-        default: (a, r, g, b) = (255, 0, 0, 0)
-        }
-        self.init(.sRGB, red: Double(r) / 255, green: Double(g) / 255, blue: Double(b) / 255, opacity: Double(a) / 255)
-    }
-}
+// See "Required Extensions" section for Color+Hex extension
 ```
 
 **Key Points:**
@@ -682,7 +660,7 @@ HStack(spacing: 16) {
 
 ## Layer Order Parsing
 
-**CRITICAL:** Read Layer Order from Implementation Spec to determine ZStack ordering.
+Read Layer Order from Implementation Spec to determine ZStack ordering.
 
 **SwiftUI ZStack:** Last child renders on top (opposite of HTML/React)
 
@@ -739,7 +717,7 @@ Process components from the Implementation Spec in dependency order (children be
 
 #### 0. Check for Asset Children (BEFORE MCP)
 
-**CRITICAL:** Before calling figma_generate_code, check if component has Asset Children.
+Before calling figma_generate_code, check if component has Asset Children.
 
 ```
 Read component's "Asset Children" property from spec
@@ -864,7 +842,7 @@ Text("Type a scene to generate your video")
 | ANGULAR | `AngularGradient` | `AngularGradient(stops: [...], center: .center)` |
 | DIAMOND | `AngularGradient` | `AngularGradient(stops: [...], center: .center)` (treat as angular) |
 
-**CRITICAL: Preserve exact 4-decimal precision in gradient stop locations:**
+**Important - Preserve exact 4-decimal precision in gradient stop locations:**
 
 ```swift
 // ❌ WRONG - Dropping trailing zero
@@ -969,30 +947,30 @@ Read text decoration from the **"Text Decoration"** section of Implementation Sp
 // Underline with custom color (iOS 16+)
 @available(iOS 16.0, *)
 struct HookText: View {
-    var body: some View {
-        Text("Hook")
-            .font(.system(size: 14, weight: .regular))
-            .underline(color: Color(hex: "#ffd100"))
-    }
+  var body: some View {
+    Text("Hook")
+      .font(.system(size: 14, weight: .regular))
+      .underline(color: Color(hex: "#ffd100"))
+  }
 }
 
 // Strikethrough with color and opacity (iOS 16+)
 @available(iOS 16.0, *)
 struct StrikeText: View {
-    var body: some View {
-        Text("Strike")
-            .font(.system(size: 14, weight: .regular))
-            .strikethrough(color: Color(hex: "#ff0000").opacity(0.8))
-    }
+  var body: some View {
+    Text("Strike")
+      .font(.system(size: 14, weight: .regular))
+      .strikethrough(color: Color(hex: "#ff0000").opacity(0.8))
+  }
 }
 
 // Basic underline without color (iOS 15 compatible)
 struct BasicUnderline: View {
-    var body: some View {
-        Text("Basic")
-            .font(.system(size: 14, weight: .regular))
-            .underline()
-    }
+  var body: some View {
+    Text("Basic")
+      .font(.system(size: 14, weight: .regular))
+      .underline()
+  }
 }
 ```
 
@@ -1002,25 +980,25 @@ struct BasicUnderline: View {
 // Option 1: iOS 16+ only (recommended for new apps)
 @available(iOS 16.0, *)
 struct HookText: View {
-    var body: some View {
-        Text("Hook")
-            .underline(color: Color(hex: "#ffd100"))
-    }
+  var body: some View {
+    Text("Hook")
+      .underline(color: Color(hex: "#ffd100"))
+  }
 }
 
 // Option 2: With iOS 15 fallback (for backward compatibility)
 struct HookText: View {
-    var body: some View {
-        if #available(iOS 16.0, *) {
-            Text("Hook")
-                .font(.system(size: 14, weight: .regular))
-                .underline(color: Color(hex: "#ffd100"))
-        } else {
-            Text("Hook")
-                .font(.system(size: 14, weight: .regular))
-                .underline()  // No color on iOS 15
-        }
+  var body: some View {
+    if #available(iOS 16.0, *) {
+      Text("Hook")
+        .font(.system(size: 14, weight: .regular))
+        .underline(color: Color(hex: "#ffd100"))
+    } else {
+      Text("Hook")
+        .font(.system(size: 14, weight: .regular))
+        .underline()  // No color on iOS 15
     }
+  }
 }
 ```
 
@@ -1074,18 +1052,18 @@ When Inline Text Variations exist, generate Text concatenation:
 ```swift
 // Single-color text (no variations)
 Text("Simple text")
-    .foregroundColor(.white)
+  .foregroundColor(.white)
 
 // Multi-color text (with variations from spec)
 (
-    Text("Let's fix your ")
-        .font(.system(size: 24, weight: .semibold))
-        .foregroundColor(.white)
-    +
-    Text("Hook")
-        .font(.system(size: 24, weight: .semibold))
-        .foregroundColor(Color(hex: "#F2F20D"))
-        .underline()
+  Text("Let's fix your ")
+    .font(.system(size: 24, weight: .semibold))
+    .foregroundColor(.white)
+  +
+  Text("Hook")
+    .font(.system(size: 24, weight: .semibold))
+    .foregroundColor(Color(hex: "#F2F20D"))
+    .underline()
 )
 ```
 
@@ -1102,9 +1080,9 @@ Text("Simple text")
 ```swift
 // For each variation row in table:
 Text("{variation.text}")
-    .font(.system(size: {fontSize}, weight: .{weight}))
-    .foregroundColor({colorModifier})
-    {decorationModifier}
+  .font(.system(size: {fontSize}, weight: .{weight}))
+  .foregroundColor({colorModifier})
+  {decorationModifier}
 
 // colorModifier:
 // - #FFFFFF → .white
@@ -1130,16 +1108,16 @@ Input spec:
 Generated SwiftUI:
 ```swift
 private var titleText: some View {
-    (
-        Text("Let's fix your ")
-            .font(.system(size: 24, weight: .semibold))
-            .foregroundColor(.white)
-        +
-        Text("Hook")
-            .font(.system(size: 24, weight: .semibold))
-            .foregroundColor(Color(hex: "#F2F20D"))
-            .underline()
-    )
+  (
+    Text("Let's fix your ")
+      .font(.system(size: 24, weight: .semibold))
+      .foregroundColor(.white)
+    +
+    Text("Hook")
+      .font(.system(size: 24, weight: .semibold))
+      .foregroundColor(Color(hex: "#F2F20D"))
+      .underline()
+  )
 }
 ```
 
@@ -1411,7 +1389,30 @@ enum CardVariant {
   case outlined
 }
 
-// MARK: - Preview
+// MARK: - Preview (iOS 17+)
+
+#Preview("Light Mode") {
+  CardView(
+    title: "Sample Card",
+    description: "This is a sample description for the card component.",
+    imageName: "sample-image",
+    variant: .elevated
+  )
+  .padding()
+}
+
+#Preview("Dark Mode") {
+  CardView(
+    title: "Sample Card",
+    description: "This is a sample description for the card component.",
+    imageName: "sample-image",
+    variant: .elevated
+  )
+  .preferredColorScheme(.dark)
+  .padding()
+}
+
+// MARK: - Preview (iOS 13-16 fallback)
 
 struct CardView_Previews: PreviewProvider {
   static var previews: some View {
@@ -1443,7 +1444,7 @@ struct CardView_Previews: PreviewProvider {
 
 ## Required Extensions
 
-**CRITICAL:** When generating SwiftUI code, include these helper extensions if needed.
+When generating SwiftUI code, include these helper extensions if needed.
 
 ### Color+Hex Extension
 
@@ -1451,29 +1452,29 @@ If any generated code uses `Color(hex:)`, include this extension:
 
 ```swift
 extension Color {
-    init(hex: String) {
-        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&int)
-        let a, r, g, b: UInt64
-        switch hex.count {
-        case 3: // RGB (12-bit)
-            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6: // RGB (24-bit)
-            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8: // ARGB (32-bit)
-            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
-        default:
-            (a, r, g, b) = (255, 0, 0, 0)
-        }
-        self.init(
-            .sRGB,
-            red: Double(r) / 255,
-            green: Double(g) / 255,
-            blue: Double(b) / 255,
-            opacity: Double(a) / 255
-        )
+  init(hex: String) {
+    let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+    var int: UInt64 = 0
+    Scanner(string: hex).scanHexInt64(&int)
+    let a, r, g, b: UInt64
+    switch hex.count {
+    case 3: // RGB (12-bit)
+      (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+    case 6: // RGB (24-bit)
+      (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+    case 8: // ARGB (32-bit)
+      (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+    default:
+      (a, r, g, b) = (255, 0, 0, 0)
     }
+    self.init(
+      .sRGB,
+      red: Double(r) / 255,
+      green: Double(g) / 255,
+      blue: Double(b) / 255,
+      opacity: Double(a) / 255
+    )
+  }
 }
 ```
 
@@ -1483,17 +1484,17 @@ If spec has per-corner radius and project targets iOS 15, include this shape:
 
 ```swift
 struct RoundedCorner: Shape {
-    var radius: CGFloat = .infinity
-    var corners: UIRectCorner = .allCorners
+  var radius: CGFloat = .infinity
+  var corners: UIRectCorner = .allCorners
 
-    func path(in rect: CGRect) -> Path {
-        let path = UIBezierPath(
-            roundedRect: rect,
-            byRoundingCorners: corners,
-            cornerRadii: CGSize(width: radius, height: radius)
-        )
-        return Path(path.cgPath)
-    }
+  func path(in rect: CGRect) -> Path {
+    let path = UIBezierPath(
+      roundedRect: rect,
+      byRoundingCorners: corners,
+      cornerRadii: CGSize(width: radius, height: radius)
+    )
+    return Path(path.cgPath)
+  }
 }
 
 // Usage:

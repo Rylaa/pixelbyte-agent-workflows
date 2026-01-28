@@ -2,6 +2,22 @@
 
 All notable changes to the pb-figma plugin will be documented in this file.
 
+## [1.14.0] - 2026-01-28
+
+### Fixed
+- **Hex Color Format** - Fixed RGBA vs ARGB inconsistency in documentation (now correctly documents ARGB format matching implementation)
+- **MCP vs Image() Clarification** - Added decision table clarifying when to use MCP generation vs manual Image() calls
+- **UnevenRoundedRectangle Order** - Fixed parameter order in examples to match Swift API signature
+
+### Changed
+- **Reduced CRITICAL Markers** - Reduced from 10 to 5 truly critical warnings (improves signal-to-noise ratio)
+- **Standardized Code Indentation** - All SwiftUI examples now use 2-space indentation consistently
+- **Removed Duplicate Extensions** - Consolidated Color+Hex extension (removed ~15 duplicate lines)
+- **Removed Duplicate Templates** - Consolidated Image() generation templates (removed ~20 duplicate lines)
+
+### Added
+- **iOS 17+ #Preview Pattern** - Added modern `#Preview` macro alongside deprecated PreviewProvider for iOS 13-16 compatibility
+
 ## [1.13.0] - 2026-01-28
 
 ### Added

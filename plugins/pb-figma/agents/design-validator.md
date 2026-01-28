@@ -114,6 +114,55 @@ const strokeAlign = nodeDetails.strokeAlign;  // INSIDE, OUTSIDE, CENTER
 - Example: `1px #FFFFFF40 inside` (1px white at 40% opacity, inside stroke)
 - No border: `none`
 
+### 3.6 Fill Opacity Extraction
+
+**CRITICAL:** For each fill color, extract BOTH the hex color AND fill opacity separately.
+
+**Extraction Pattern:**
+
+```typescript
+const nodeDetails = figma_get_node_details({
+  file_key: "{file_key}",
+  node_id: "{node_id}"
+});
+
+// Extract fills with opacity
+const fills = nodeDetails.fills?.map(fill => {
+  const color = fill.color; // { r, g, b, a }
+  const hex = rgbToHex(color.r, color.g, color.b);
+
+  // Fill opacity is separate from color alpha
+  const fillOpacity = fill.opacity ?? 1.0;
+
+  // Node-level opacity (affects entire node)
+  const nodeOpacity = nodeDetails.opacity ?? 1.0;
+
+  // Effective opacity = fillOpacity * nodeOpacity
+  const effectiveOpacity = fillOpacity * nodeOpacity;
+
+  return {
+    hex,
+    fillOpacity,
+    nodeOpacity,
+    effectiveOpacity
+  };
+});
+```
+
+**Color Table Requirements:**
+- **Fill Opacity column is MANDATORY** for all colors
+- Include effective opacity when nodeOpacity ≠ 1.0
+- Document calculation: `effectiveOpacity = fillOpacity × nodeOpacity`
+
+**Example output:**
+
+```markdown
+| Name | Value | Fill Opacity | Node Opacity | Effective | Usage |
+|------|-------|--------------|--------------|-----------|-------|
+| card-bg | #f2f20d | 0.05 | 1.0 | 0.05 | Growth section |
+| text-muted | #ffffff | 1.0 | 0.7 | 0.7 | Description |
+```
+
 ### 4. Missing Data Resolution
 If any data is unclear or missing:
 1. Use `figma_get_node_details` for specific nodes
@@ -401,10 +450,12 @@ Write to: `docs/figma-reports/{file_key}-validation.md`
 ## Design Tokens
 
 ### Colors
-| Name | Value | Usage |
-|------|-------|-------|
-| primary | #3B82F6 | Button backgrounds |
-| text | #1F2937 | Body text |
+| Name | Value | Fill Opacity | Node Opacity | Effective | Usage |
+|------|-------|--------------|--------------|-----------|-------|
+| primary | #3B82F6 | 1.0 | 1.0 | 1.0 | Button backgrounds |
+| text | #1F2937 | 1.0 | 1.0 | 1.0 | Body text |
+| card-fill | #f2f20d | 0.05 | 1.0 | 0.05 | Growth section background |
+| text-muted | #ffffff | 1.0 | 0.7 | 0.7 | Description text |
 
 ### Typography
 | Style | Font | Size | Weight | Line Height |

@@ -217,7 +217,14 @@ Result: Export 6:38, not 6:34
 
 #### 2.1.2 LLM Vision Analysis for Flagged Frames
 
-**Purpose:** Use Claude vision to make final decision on frames flagged by design-validator complexity triggers.
+**Workflow clarification:**
+- Design Validator flagged these frames as potentially complex
+- Design Analyst passed them through without interpretation
+- **This agent (Asset Manager) makes the FINAL decision**
+
+Use Claude Vision to analyze each flagged frame and decide:
+- `DOWNLOAD_AS_IMAGE` → Download as PNG, treat as illustration
+- `GENERATE_CODE` → Let code generator handle as normal component
 
 **When to Use:** Only for frames listed in "Flagged for LLM Review" section of the Implementation Spec.
 

@@ -599,6 +599,13 @@ const layerOrder = nodeDetails.children.map((child, index) => ({
 
 ### 7. Preserving Flagged Frames
 
+**Workflow clarification:**
+1. **Design Validator** → Flags complex frames based on heuristics
+2. **Design Analyst** → Copies flags verbatim to spec (NO decision made here)
+3. **Asset Manager** → Makes final decision using LLM Vision analysis
+
+**This agent (Design Analyst) is a PASS-THROUGH** - do not interpret or modify flags.
+
 When creating Implementation Spec, check if Validation Report contains "## Flagged for LLM Review" section:
 
 **If section exists:**

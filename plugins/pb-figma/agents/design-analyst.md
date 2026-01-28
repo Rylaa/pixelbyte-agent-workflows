@@ -654,6 +654,29 @@ For each asset in the inventory:
 - Illustrations: SVG or optimized PNG
 - Logos: SVG preferred
 
+**Unresolved Icon Handling:**
+
+If the Validation Report's Assets Inventory contains:
+- An icon with `(not identified)` name, OR
+- A `[FALLBACK]` tag, OR
+- An "Unresolved Items" entry for an icon
+
+Then the design-analyst MUST:
+
+1. Query the icon's node ID via `figma_get_node_details` to get the actual name
+2. If name is still unresolvable, use `figma_get_screenshot` on the icon node to visually identify it
+3. Document in spec with explicit warning:
+
+```markdown
+## Unresolved Assets
+
+| Node ID | Type | Issue | Fallback |
+|---------|------|-------|----------|
+| 3:400 | icon | Name not detected | Screenshot captured — visual identification needed |
+```
+
+4. Do NOT silently substitute another icon — prefer explicit documentation over wrong asset
+
 ### 5. Implementation Checklist
 
 Generate actionable tasks organized by development phase:

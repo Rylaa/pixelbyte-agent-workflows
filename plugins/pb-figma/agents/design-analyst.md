@@ -519,6 +519,81 @@ Extract text decoration (underline, strikethrough) from text nodes via `figma_ge
 - Decoration color must match text fill color (REST API limitation)
 - Omit thickness property (not available in REST API)
 
+#### Inline Text Style Variations Detection
+
+**Problem:** A single TEXT node may have multiple character styles (different colors, weights, or decorations for different words).
+
+**Detection via Figma API:**
+
+When `figma_get_node_details` returns a TEXT node, check for `characterStyleOverrides` array:
+
+```typescript
+const nodeDetails = figma_get_node_details({
+  file_key: "{file_key}",
+  node_id: "{text_node_id}"
+});
+
+// Check if text has character-level style overrides
+if (nodeDetails.characterStyleOverrides?.length > 0) {
+  // Text has inline style variations
+  // Cross-reference with styleOverrideTable for actual styles
+  const styleTable = nodeDetails.styleOverrideTable;
+
+  for (const [key, style] of Object.entries(styleTable)) {
+    // Each style may have different fills (colors)
+    const fills = style.fills;
+    // Extract color for each style variation
+  }
+}
+```
+
+**Alternative Detection - Visual Inspection:**
+
+If REST API doesn't expose character styles, use the screenshot + text content to identify variations:
+
+1. Get text node content: `nodeDetails.characters`
+2. Get text node's primary fill color
+3. If text contains visually distinct words (underlined, different color in screenshot):
+   - Flag for manual inspection
+   - Document in "Inline Text Variations" section
+
+**Implementation Spec Output:**
+
+When inline variations detected, add to spec:
+
+```markdown
+### Inline Text Variations
+
+**Component:** TitleText
+**Full Text:** "Let's fix your Hook"
+**Variations:**
+| Range | Text | Color | Weight | Decoration |
+|-------|------|-------|--------|------------|
+| 0-15 | "Let's fix your " | #FFFFFF | 600 | none |
+| 15-19 | "Hook" | #F2F20D | 600 | underline |
+
+**SwiftUI Mapping:** Use Text concatenation with + operator
+```
+
+**Code Generator Usage:**
+
+```swift
+// From Inline Text Variations table:
+Text("Let's fix your ")
+    .font(.system(size: 24, weight: .semibold))
+    .foregroundColor(.white)
++ Text("Hook")
+    .font(.system(size: 24, weight: .semibold))
+    .foregroundColor(Color(hex: "#F2F20D"))
+    .underline()
+```
+
+**Detection Rules:**
+1. Always query `characterStyleOverrides` for TEXT nodes
+2. If overrides exist, extract each style from `styleOverrideTable`
+3. Document character ranges and their styles
+4. If API doesn't support, flag for visual inspection
+
 ### 4. Asset Requirements
 
 For each asset in the inventory:

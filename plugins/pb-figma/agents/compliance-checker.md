@@ -420,6 +420,21 @@ Write Final Report to: `docs/figma-reports/{file_key}-final.md`
 ### Asset Files
 - `{path/to/asset.svg}` - {status}
 
+## Visual Diff Report
+
+**Full report:** `docs/figma-reports/{file_key}-visual-diff.md`
+
+**Summary:**
+| Severity | Count |
+|----------|-------|
+| HIGH | {n} |
+| MEDIUM | {n} |
+| LOW | {n} |
+
+**HIGH severity items:**
+1. {Brief description} — {file}:{line}
+2. ...
+
 ## Compliance Checklist
 
 ### Component Structure
@@ -645,6 +660,7 @@ Any of the following (without FAIL conditions):
 - Info-level observations present
 - 1-3 warning-level issues
 - Some hardcoded values instead of tokens
+- Visual diff report contains MEDIUM severity items
 
 ### FAIL
 
@@ -659,6 +675,7 @@ Any of the following:
 - Layer order completely reversed or critical components rendered in wrong order
 - Unresolved assets present (spec contains "Unresolved Assets" section with unresolved icons)
 - Placeholder icons used (code contains `questionmark.square.dashed` or `// TODO: Unresolved icon`)
+- Visual diff report contains any HIGH severity items
 
 ## Error Handling
 

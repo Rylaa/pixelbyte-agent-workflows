@@ -364,13 +364,9 @@ Use `TodoWrite` to track validation progress through these steps:
    - Use format: `{file_key}-{YYYYMMDD-HHmmss}.png`
 4. **Extract Tokens** - Use `figma_get_design_tokens` for colors, typography, spacing
 5. **List Assets** - Use `figma_list_assets` to catalog images, icons, vectors
-6. **Classify Duplicate Icons** - If multiple icons share the same name:
-   - Use `figma_get_node_details` on each icon's parent container
-   - Determine icon position in layout (leading vs trailing)
-   - Add `iconPosition` field to asset inventory:
-     - `leading` = Thematic icon (action representation)
-     - `trailing` = Status indicator (checkmark, chevron)
-   - Add `iconType` field: `THEMATIC` or `STATUS_INDICATOR`
+6. **Classify Duplicate Icons** - See @skills/figma-to-code/references/asset-classification-guide.md
+   - Determine icon position (leading=thematic, trailing=status)
+   - Add `iconPosition` and `iconType` fields to asset inventory
 7. **Deep Inspection** - For each component, use `figma_get_node_details`
 8. **Resolve Gaps** - Attempt to fill missing data with additional MCP calls
 9. **Ensure Output Directory** - Create directory and file:

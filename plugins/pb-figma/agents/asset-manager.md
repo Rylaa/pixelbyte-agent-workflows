@@ -143,36 +143,19 @@ For each asset in the "Assets Required" table, classify the asset type and use t
    - Check for imageRef property
    - Apply classification table below
 
-Before downloading, determine the asset type:
+See: @skills/figma-to-code/references/asset-classification-guide.md
 
-| Asset Type | Detection Criteria | Download Strategy |
-|------------|-------------------|-------------------|
-| **SIMPLE_ICON** | Single vector path OR <10 child vectors, 16-48px, NO exportSettings | SVG, scale: 1 |
-| **COMPLEX_VECTOR** | Multiple vector paths (≥3 children), >50px in either dimension | PNG, scale: 2 |
-| **CHART_ILLUSTRATION** | Has exportSettings OR marked as illustration in Validation Report | PNG, scale: 2 |
-| **RASTER_IMAGE** | Contains image fills, photos, backgrounds | PNG/WebP, scale: 2 |
-| **IMAGE_FILL** | Node has imageRef property (photo/background) | Use figma_get_images |
+**Quick reference - Asset Types:**
 
-**Classification Priority (when node matches multiple types):**
-1. CHART_ILLUSTRATION (highest - has exportSettings)
-2. IMAGE_FILL (has imageRef property)
-3. RASTER_IMAGE (bitmap/photo content)
-4. COMPLEX_VECTOR (≥3 vector paths, >50px)
-5. SIMPLE_ICON (lowest priority - <10 vector paths, <50px)
+| Asset Type | Detection Criteria | Format |
+|------------|-------------------|--------|
+| SIMPLE_ICON | <10 vectors, 16-48px | SVG |
+| COMPLEX_VECTOR | ≥3 vectors, >50px | PNG |
+| CHART_ILLUSTRATION | Has exportSettings | PNG |
+| RASTER_IMAGE | Image fills | PNG |
+| IMAGE_FILL | Has imageRef | Use figma_get_images |
 
-**Example**: A node with both imageRef and vector children → Classify as IMAGE_FILL
-
-**COMPLEX_VECTOR Examples:**
-- Charts and graphs with multiple data series
-- Illustrations with many individual vector elements
-- Decorative graphics with complex nested structures
-- Icons that are actually small illustrations (>10 paths)
-
-**Why PNG for COMPLEX_VECTOR:**
-- Complex SVGs can have huge file sizes (many path elements)
-- Rendering performance issues in browsers/apps
-- Difficult to style or modify individual elements
-- Better as optimized raster at target resolution
+**Priority:** CHART_ILLUSTRATION > IMAGE_FILL > RASTER_IMAGE > COMPLEX_VECTOR > SIMPLE_ICON
 
 #### 2.1.1 Composite Illustration Detection (CRITICAL)
 

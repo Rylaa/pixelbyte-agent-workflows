@@ -92,12 +92,14 @@ For each component, identify:
 
 #### Card/List Item Icon Classification
 
-**CRITICAL:** When analyzing card or list item components with multiple icons, you MUST classify icons by their POSITION in the layout:
+See: @skills/figma-to-code/references/asset-classification-guide.md for full classification rules.
 
-| Position | Icon Type | Purpose | Examples |
-|----------|-----------|---------|----------|
-| LEFT (leading) | Thematic Icon | Represents the action/content | Clock, Flask, Folder, User |
-| RIGHT (trailing) | Status Indicator | Shows state or navigation | Checkmark, Chevron, Arrow |
+**CRITICAL:** Classify icons by their POSITION in the layout:
+
+| Position | Icon Type | Purpose |
+|----------|-----------|---------|
+| LEFT (leading) | Thematic Icon | Represents action/content |
+| RIGHT (trailing) | Status Indicator | Shows state/navigation |
 
 **Detection Rules:**
 

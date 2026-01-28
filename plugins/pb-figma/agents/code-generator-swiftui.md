@@ -689,11 +689,9 @@ Color.primary
 
 ##### Apply Opacity from Spec
 
-**Read opacity from Implementation Spec Design Tokens table:**
+See: @skills/figma-to-code/references/opacity-extraction.md for calculation details.
 
-The Usage column contains the **complete modifier chain** to apply to your SwiftUI view. Copy this exactly as shown.
-
-When Implementation Spec includes Opacity column:
+**Copy Usage column from Design Tokens table** - it contains the complete SwiftUI modifier chain.
 
 ```markdown
 | Property | Color | Opacity | Usage |
@@ -701,71 +699,11 @@ When Implementation Spec includes Opacity column:
 | Border | #ffffff | 0.4 | `.stroke(Color.white.opacity(0.4))` |
 ```
 
-**Generate SwiftUI code with opacity modifier:**
-
-*Note: Examples below use `Color(hex:)` which requires a custom extension. See Task 5 for Color+Hex extension implementation. Alternatively, use standard SwiftUI: `Color(red:green:blue:).opacity(X)`*
-
-**Two patterns for opacity application:**
-
-**Pattern 1: Color-level opacity** (for borders, fills, text colors)
-```swift
-// Border with opacity from spec
-RoundedRectangle(cornerRadius: 12)
-    .stroke(Color.white.opacity(0.4), lineWidth: 1.0)
-
-// Background with opacity
-Rectangle()
-    .fill(Color(hex: "#150200").opacity(0.8))
-
-// Text with opacity
-Text(title)
-    .foregroundColor(Color(hex: "#333333").opacity(0.9))
-```
-
-**Pattern 2: View-level opacity** (for gradients, overlays, entire elements)
-```swift
-// Gradient overlay with opacity applied to entire view
-RadialGradient(
-    gradient: Gradient(stops: [
-        .init(color: Color(hex: "#f02912"), location: 0.0),
-        .init(color: Color(hex: "#150200"), location: 1.0)
-    ]),
-    center: .center,
-    startRadius: 0,
-    endRadius: 200
-)
-.opacity(0.2)
-
-// Shape overlay with opacity
-RoundedRectangle(cornerRadius: 24)
-    .fill(Color.blue)
-    .opacity(0.5)
-```
-
-**CRITICAL RULES:**
-
-1. **Primary source: Usage column** - Copy the ready-to-use SwiftUI code shown in Usage column
-2. **Never ignore opacity modifiers** - If Usage shows `.opacity(X)`, include it in generated code
-3. **Opacity column is reference only** - Shows the numeric value, but Usage column has correct implementation
-4. **When opacity is 1.0** - Usage column won't include `.opacity()` modifier (SwiftUI default)
-5. **When opacity is 0.0** - Element is fully transparent (invisible). Verify this is intentional or add TODO comment
-
-**Common mistakes to avoid:**
-
-```swift
-// ❌ WRONG - Ignoring Color-level opacity from spec
-.stroke(Color.white, lineWidth: 1.0)
-
-// ✅ CORRECT - Applying Color-level opacity from spec
-.stroke(Color.white.opacity(0.4), lineWidth: 1.0)
-
-// ❌ WRONG - Ignoring view-level opacity from spec
-RadialGradient(...)
-
-// ✅ CORRECT - Applying view-level opacity from spec
-RadialGradient(...)
-    .opacity(0.2)
-```
+**Key rules:**
+1. **Primary source: Usage column** - Copy exactly as shown
+2. **Never ignore opacity modifiers** - If Usage shows `.opacity(X)`, include it
+3. **opacity: 1.0** - No `.opacity()` modifier needed (SwiftUI default)
+4. **opacity: 0.0** - Element is invisible, verify intentional
 
 ##### Apply Gradients from Spec
 

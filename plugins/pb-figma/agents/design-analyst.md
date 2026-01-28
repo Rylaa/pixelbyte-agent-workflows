@@ -352,65 +352,22 @@ Custom → rounded-[Xpx]
 
 #### Opacity Handling
 
-Extract opacity for all visual properties from `figma_get_node_details`:
+See: @skills/figma-to-code/references/opacity-extraction.md
 
-**Query Pattern:**
-```typescript
-const nodeDetails = figma_get_node_details({
-  file_key: "{file_key}",
-  node_id: "{node_id}"
-});
+**Key rule:** Always calculate `effectiveOpacity = fillOpacity * nodeOpacity`
 
-// Extract BOTH fill opacity and node opacity
-const fillOpacity = nodeDetails.fills?.[0]?.opacity ?? 1.0;  // Default to 1.0 if undefined
-const nodeOpacity = nodeDetails.opacity ?? 1.0;              // Default to 1.0 if undefined
+**In Implementation Spec - Always include Opacity column:**
 
-// Calculate effective opacity (compound multiplication)
-const effectiveOpacity = fillOpacity * nodeOpacity;
-
-// Example:
-// fills[0].opacity = 0.4, node.opacity = 1.0 → effective = 0.4
-// fills[0].opacity = 0.5, node.opacity = 0.8 → effective = 0.4
-```
-
-**In Implementation Spec - Add Opacity Column:**
 ```markdown
-## Design Tokens (Ready to Use)
-
-### Colors
-
 | Property | Color | Opacity | Usage |
 |----------|-------|---------|-------|
 | Border | #ffffff | 0.4 | `.stroke(Color.white.opacity(0.4))` |
 | Background | #150200 | 1.0 | `.background(Color(hex: "#150200"))` |
-| Text | #333333 | 0.9 | `.foregroundColor(Color.primary.opacity(0.9))` |
 ```
 
-**Warning Conditions:**
-
-Add to Implementation Spec if detected:
-
-```markdown
-### Design Warnings
-
-- ⚠️ **Semi-transparent border** (opacity: 0.4): Border may appear faded over dark backgrounds. Consider increasing opacity to 0.8+ for better visibility.
-- ⚠️ **Semi-transparent text** (opacity < 1.0): Text readability may be reduced. Ensure WCAG contrast ratio compliance.
-```
-
-**Opacity extraction rules:**
-- **Always extract BOTH opacities:** fills[0].opacity AND node.opacity from `figma_get_node_details`
-- **Calculate effective opacity:** effectiveOpacity = fillOpacity × nodeOpacity
-- **Always include Opacity column** in Design Tokens table showing effective opacity
-- `opacity: 1.0` → Omit `.opacity()` modifier in Usage column (default SwiftUI behavior)
-- `opacity: 0.01 - 0.99` → Include `.opacity(X)` modifier in Usage column with effective value
-- `opacity: 0.0` → Element is fully transparent (invisible) - verify this is intentional
-- Border/stroke opacity < 0.8 → Add warning to Design Warnings section
-- Text opacity < 1.0 → Add warning to Design Warnings section
-
-**Calculation examples:**
-- fills[0].opacity=0.4, node.opacity=1.0 → effective=0.4 → Usage: `.stroke(Color.white.opacity(0.4))`
-- fills[0].opacity=0.5, node.opacity=0.8 → effective=0.4 → Usage: `.opacity(0.4)`
-- fills[0].opacity=undefined, node.opacity=0.6 → effective=0.6 → Usage: `.opacity(0.6)`
+**Warning conditions:**
+- Border/stroke opacity < 0.8 → Add to Design Warnings
+- Text opacity < 1.0 → Add to Design Warnings
 
 #### Gradient Detection
 

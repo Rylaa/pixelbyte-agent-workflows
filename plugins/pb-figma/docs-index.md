@@ -55,7 +55,7 @@
 | Topic | Path | Used By |
 |-------|------|---------|
 | Storybook Integration | @skills/figma-to-code/references/storybook-integration.md | code-generator-react |
-| CI/CD Integration | @skills/figma-to-code/references/ci-cd-integration.md | handoff |
+| CI/CD Integration | @skills/figma-to-code/references/ci-cd-integration.md | ⚠️ Not integrated (no agent uses this) |
 
 ## Prompt Templates
 

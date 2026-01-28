@@ -535,6 +535,91 @@ Add to Final Report:
 
 ---
 
+### Visual Diff Report (REQUIRED)
+
+**Purpose:** Generate a structured diff document comparing Figma design intent with generated code, usable by a fixer agent.
+
+**Process:**
+
+1. **Capture Figma screenshot:**
+   ```
+   figma_get_screenshot(file_key="{file_key}", node_ids=["{root_node_id}"], scale=2)
+   ```
+
+2. **Read all generated code files** listed in the spec
+
+3. **Analyze Figma screenshot** using Claude Vision with this prompt:
+
+   "Analyze this Figma design screenshot. For each visible UI element, describe:
+   - Element type (text, button, card, image, icon, badge)
+   - Approximate colors (hex if possible)
+   - Approximate text content and styling (bold, italic, underline, opacity)
+   - Layout relationships (above, below, inside, beside)
+   - Visual effects (shadows, borders, rounded corners, gradients)
+   - Any text that appears to have different colors within the same line"
+
+4. **Compare vision analysis against generated code** for each element:
+   - Does the code produce the same visual element?
+   - Do colors match?
+   - Does text styling match (including inline variations)?
+   - Do opacity values match?
+   - Are icons/images correct?
+
+5. **Generate Visual Diff Report** and write to: `docs/figma-reports/{file_key}-visual-diff.md`
+
+**Visual Diff Report Format:**
+
+```markdown
+# Visual Diff Report: {design_name}
+
+**Figma Screenshot:** {screenshot_path}
+**Generated Code Files:** {list of files}
+**Date:** {timestamp}
+
+## Differences Found
+
+### Diff 1: {Element Name}
+
+| Aspect | Figma (Visual) | Code (Generated) | Severity |
+|--------|---------------|-------------------|----------|
+| Text Color | "Hook" appears yellow (#F2F20D) | `.foregroundColor(.white)` on entire text | HIGH |
+| Text Decoration | "Hook" has underline | No `.underline()` modifier | HIGH |
+
+**Figma Evidence:** In the screenshot, the word "Hook" in the heading is visibly a different color (bright yellow) from the rest of the white text, and has an underline decoration.
+
+**Code Location:** `AIAnalysisView.swift:88-90`
+
+**Suggested Fix:**
+```swift
+// Replace single Text with concatenation
+(Text("Let's fix your ")
+    .foregroundColor(.white)
++ Text("Hook")
+    .foregroundColor(Color.viralYellow)
+    .underline())
+    .font(.custom("Poppins-SemiBold", size: 24))
+```
+
+---
+
+### Diff 2: {Element Name}
+... (same format)
+```
+
+**Severity Levels:**
+- **HIGH:** Visually obvious difference (wrong color, missing element, wrong icon)
+- **MEDIUM:** Subtle difference (opacity off, spacing slightly wrong)
+- **LOW:** Minor difference (font rendering, anti-aliasing)
+
+**Rules:**
+- Always capture at least one Figma screenshot before generating the diff
+- Compare EVERY visible element in the screenshot against the code
+- Include code file and line number for each difference
+- Include a suggested fix for HIGH and MEDIUM severity items
+- The diff report is a separate file from the final report
+
+---
+
 ## Pass/Fail Criteria
 
 ### PASS

@@ -2,6 +2,29 @@
 
 All notable changes to the pb-figma plugin will be documented in this file.
 
+## [1.13.0] - 2026-01-28
+
+### Added
+- **Inline Text Color Detection** - Design Analyst now detects `characterStyleOverrides` and produces Inline Text Variations table with per-segment colors
+- **Fill Opacity Extraction** - Design Validator extracts both fill opacity and node opacity separately, calculates effective opacity
+- **Icon Name Pattern Detection** - Design Validator detects icon library naming patterns (e.g., `mynaui:arrow-right`) and classifies as thematic icons
+- **Text Concatenation** - Code Generator SwiftUI produces `Text(...) + Text(...)` for inline color/style variations
+- **Image-with-Text Detection** - Code Generator SwiftUI skips duplicate Text() when illustration contains embedded text (flagged as DOWNLOAD_AS_IMAGE)
+- **test-inline-text-color.md** - Test case for inline text color detection and SwiftUI concatenation
+- **test-image-with-text.md** - Test case for image-with-text duplication prevention
+
+### Fixed
+- **"Hook" Text Color** - Inline text color now extracted correctly (was white, now yellow #F2F20D with underline)
+- **Card Background Opacity** - Fill opacity now extracted separately from node opacity (was missing 0.05 opacity)
+- **Card Icon Classification** - Icons with library naming patterns now classified correctly (was using wrong icon)
+- **Duplicate Text in Image** - Text embedded in flagged illustrations no longer duplicated as separate Text() components
+- **Card Height Missing** - Height now mandatory in Frame Properties table (was optional)
+
+### Changed
+- Design Validator Colors table now has Fill Opacity, Node Opacity, and Effective columns
+- Design Analyst Frame Properties table now requires Height field
+- Code Generator SwiftUI includes Image-with-Text Detection section in process
+
 ## [1.12.0] - 2026-01-28
 
 ### Added

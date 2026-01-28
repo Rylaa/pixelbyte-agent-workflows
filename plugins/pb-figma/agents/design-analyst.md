@@ -765,6 +765,54 @@ Implementation Spec should include the same section after Assets Required:
 
 **Important:** The design-analyst agent is a pass-through for this section. Do not interpret, filter, or modify the flagged frames - asset-manager will handle the final decision.
 
+### 8. Image-with-Text Suppression (CRITICAL)
+
+**Problem:** When a node is flagged as `DOWNLOAD_AS_IMAGE`, its text children are already "baked into" the exported image. If these text children also appear as separate components in the spec, the code-generator will create duplicate `Text()` elements alongside `Image()`.
+
+**Detection Rule:**
+
+When generating component specs, check if a component's parent or the component itself is listed in the "Flagged for LLM Review" section with `LLM Decision: DOWNLOAD_AS_IMAGE`:
+
+1. Get the flagged node IDs from the "Flagged for LLM Review" table
+2. For each flagged node, identify ALL text children (TEXT type nodes) within it
+3. These text children MUST be excluded from the component spec
+
+**Suppression Process:**
+
+1. Parse "Flagged for LLM Review" section for `DOWNLOAD_AS_IMAGE` entries
+2. For each flagged node ID, query `figma_get_node_details` to find text children
+3. Collect text child node IDs into a suppression list
+4. When generating Component tables, skip any node whose ID is in the suppression list
+5. Instead, add a note to the Asset Children entry:
+
+| Property | Value |
+|----------|-------|
+| **Asset Children** | `IMAGE:growth-chart:6:32:354:132 [contains-text: "PROJECTED GROWTH"]` |
+
+**Code-Generator Signal:**
+
+The `[contains-text: "..."]` annotation tells the code-generator:
+- Do NOT generate `Text("PROJECTED GROWTH")` as a sibling
+- The image already contains this text visually
+- Use the text content for `accessibilityLabel` instead
+
+**Example:**
+
+Input (Flagged for LLM Review):
+| Node ID | Name | LLM Decision |
+|---------|------|--------------|
+| 6:32 | GrowthSection | DOWNLOAD_AS_IMAGE |
+
+Node 6:32 children include TEXT node "PROJECTED GROWTH" (node 6:33).
+
+Output (Component Spec):
+| Property | Value |
+|----------|-------|
+| **Children** | ChartIllustration |
+| **Asset Children** | `IMAGE:growth-chart:6:32:354:132 [contains-text: "PROJECTED GROWTH"]` |
+
+Note: TitleText ("PROJECTED GROWTH") is EXCLUDED from Children — it is baked into the image.
+
 ## Output
 
 Write Implementation Spec to: `docs/figma-reports/{file_key}-spec.md`

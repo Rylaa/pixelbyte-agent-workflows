@@ -61,6 +61,78 @@ For each node and its children, verify:
 - [ ] Vectors identified (if any)
 - [ ] Export settings checked
 - [ ] **Duplicate-named icons classified** (if multiple icons share same name)
+- [ ] **Icon names extracted from Figma node names**
+
+#### 3.1 Icon Name Detection
+
+**CRITICAL:** Use Figma node name to identify icons, not generic frame names.
+
+**Detection Pattern:**
+
+```typescript
+const nodeDetails = figma_get_node_details({
+  file_key: "{file_key}",
+  node_id: "{icon_node_id}"
+});
+
+// Priority order for icon naming:
+// 1. Node name if it follows icon naming convention (e.g., "weui:time-filled")
+// 2. Parent frame name if more descriptive
+// 3. Auto-generated name based on position
+
+const iconName = nodeDetails.name;
+
+// Check if name follows icon library pattern
+const isIconLibraryName = /^[a-z]+:[a-z-]+$/i.test(iconName);
+
+if (isIconLibraryName) {
+  // Use the icon library name directly
+  // "weui:time-filled" → icon-time-filled
+  // "streamline:ecology-science-flask" → icon-flask
+}
+```
+
+**Icon Naming in Assets Inventory:**
+
+| Asset | Type | Node ID | Figma Name | Export Name |
+|-------|------|---------|------------|-------------|
+| Card 1 Icon | icon | 3:318 | weui:time-filled | icon-time-filled.svg |
+| Card 2 Icon | icon | 3:321 | streamline:flask | icon-flask.svg |
+| Card 3 Icon | icon | 3:400 | lucide:trending-up | icon-trending-up.svg |
+
+**DO NOT:**
+- Use generic names like "time icon variant" when Figma has specific name
+- Assume same icon is reused without checking node ID
+- Skip node name extraction
+
+**DO:**
+- Always query node name via `figma_get_node_details`
+- Use icon library prefix to infer icon purpose
+- Document unique node ID for each icon instance
+
+#### 3.2 Card Icon Uniqueness Check
+
+**Problem:** Multiple cards may have different icons but appear similar in structure.
+
+**Verification Process:**
+
+1. For each card in the design:
+   a. Query card children via `figma_get_node_details`
+   b. Identify leading icon node (leftmost child)
+   c. Extract icon's unique node_id
+   d. Get icon name from Figma
+
+2. Compare icon node_ids across cards:
+   ```
+   Card 1 leading icon: 3:318 (weui:time-filled)
+   Card 2 leading icon: 3:321 (streamline:flask)
+   Card 3 leading icon: 3:400 (lucide:trending-up)  ← UNIQUE, not reused
+   ```
+
+3. Each card MUST have its own icon entry in Assets Inventory
+
+**Warning condition:**
+If same node_id appears for multiple cards → likely a copy-paste error, verify manually
 
 ### 3.5 Frame Properties Extraction
 

@@ -59,13 +59,17 @@
 
 ## Prompt Templates
 
-| Phase | Path | Used By |
-|-------|------|---------|
-| Analyze Design | @skills/figma-to-code/references/prompts/analyze-design.md | design-analyst |
-| Mapping & Planning | @skills/figma-to-code/references/prompts/mapping-planning.md | design-analyst |
-| Generate Component | @skills/figma-to-code/references/prompts/generate-component.md | code-generator-* |
-| Validate & Refine | @skills/figma-to-code/references/prompts/validate-refine.md | compliance-checker |
-| Handoff | @skills/figma-to-code/references/prompts/handoff.md | compliance-checker |
+> **Note:** Bu prompt template'leri önceki versiyonlar için tasarlandı, ancak şu an hiçbir agent tarafından kullanılmıyor. Referans için korunuyor.
+
+| Template | Original Purpose | Status |
+|----------|------------------|--------|
+| analyze-design.md | Design analysis prompts | ⚠️ Unused |
+| mapping-planning.md | Mapping & planning prompts | ⚠️ Unused |
+| generate-component.md | Component generation prompts | ⚠️ Unused |
+| validate-refine.md | Validation prompts | ⚠️ Unused |
+| handoff.md | Handoff documentation | ⚠️ Unused |
+
+**Aktif agent'lar referansları doğrudan yükler** - aşağıdaki "References" bölümüne bakın.
 
 ## Examples & Templates
 

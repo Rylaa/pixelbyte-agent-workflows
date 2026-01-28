@@ -69,3 +69,47 @@ Expected opacities:
 - Radial gradient overlay: opacity 0.2
 - Border stroke white: opacity 0.4
 - Text fill gradient: opacity 1.0
+
+---
+
+## Fill Opacity Extraction Test
+
+### Purpose
+Verify that design-validator extracts fill opacity separately from node opacity.
+
+### Input
+
+Figma frame with semi-transparent fill:
+- Node ID: 6:32
+- Fill color: #F2F20D
+- Fill opacity: 0.05
+- Node opacity: 1.0
+
+### Expected Output (Validation Report)
+
+### Colors
+
+| Name | Value | Fill Opacity | Node Opacity | Effective | Usage |
+|------|-------|--------------|--------------|-----------|-------|
+| card-fill | #f2f20d | 0.05 | 1.0 | 0.05 | Growth section background |
+
+### Expected Output (Implementation Spec)
+
+### Colors
+
+| Property | Color | Opacity | Usage |
+|----------|-------|---------|-------|
+| Card Background | #f2f20d | 0.05 | `.background(Color(hex: "#f2f20d").opacity(0.05))` |
+
+### Expected Code (SwiftUI)
+
+```swift
+.background(Color(hex: "#f2f20d").opacity(0.05))
+```
+
+### Verification Steps
+
+1. [ ] Validation Report has Fill Opacity column
+2. [ ] Implementation Spec has Opacity column with Usage
+3. [ ] Generated code includes `.opacity()` modifier
+4. [ ] Opacity value matches Figma exactly (0.05, not rounded)

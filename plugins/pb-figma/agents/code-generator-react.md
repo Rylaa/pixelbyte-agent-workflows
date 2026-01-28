@@ -787,6 +787,94 @@ Include ARIA attributes and focus states:
 >
 ```
 
+##### Icon Rendering and SVG Patterns
+
+**CRITICAL:** Check Downloaded Assets table for icon type to determine correct pattern.
+
+**Read from Implementation Spec:**
+
+```markdown
+## Downloaded Assets
+
+| Asset | Local Path | Type | Recommended Pattern |
+|-------|------------|------|---------------------|
+| icon-check | public/icons/check.svg | SVG | lucide-react (similar exists) |
+| icon-custom | public/icons/custom.svg | SVG | SVG component (unique design) |
+| logo | public/images/logo.png | PNG | next/image |
+```
+
+**Pattern Selection Guide:**
+
+| Scenario | Pattern | Example |
+|----------|---------|---------|
+| Common UI icon | lucide-react | `<Check className="w-4 h-4" />` |
+| Custom icon with color control | SVG component | `<CustomIcon className="fill-primary" />` |
+| Custom icon, fixed color | img tag | `<img src="/icon.svg" />` |
+| Photo/illustration | next/image | `<Image src="/photo.jpg" />` |
+
+**lucide-react pattern:**
+```tsx
+import { Check, X, ChevronRight, Search } from 'lucide-react';
+
+// With Tailwind color
+<Check className="w-5 h-5 text-green-500" />
+
+// With size variants
+<Search className="w-4 h-4 text-gray-400" />  // Small
+<Search className="w-6 h-6 text-gray-600" />  // Medium
+```
+
+**SVG component pattern:**
+```tsx
+// 1. Create SVG component from downloaded asset
+// components/icons/CustomIcon.tsx
+export const CustomIcon: React.FC<{ className?: string }> = ({ className }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className={className}
+  >
+    <path d="..." />
+  </svg>
+);
+
+// 2. Use with Tailwind color
+import { CustomIcon } from '@/components/icons/CustomIcon';
+<CustomIcon className="w-6 h-6 text-primary" />
+```
+
+**Image with next/image:**
+```tsx
+import Image from 'next/image';
+
+// For icons (fixed size)
+<Image
+  src="/icons/logo.svg"
+  alt="Logo"
+  width={32}
+  height={32}
+/>
+
+// For responsive images
+<Image
+  src="/images/hero.jpg"
+  alt="Hero image"
+  fill
+  className="object-cover"
+/>
+```
+
+**Common mistakes:**
+
+❌ Using img for all icons → No color control, no optimization
+✅ Use lucide-react when icon exists in library
+
+❌ Using next/image for tiny icons → Overhead for small files
+✅ Use direct import or lucide for icons < 64px
+
+❌ Hardcoding width/height in multiple places
+✅ Use Tailwind `w-X h-X` for consistent sizing
+
 #### 3. Write Component Files
 
 ##### Detect Existing Directory Structure

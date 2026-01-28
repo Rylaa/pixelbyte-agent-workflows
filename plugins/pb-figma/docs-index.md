@@ -10,17 +10,19 @@
 
 ## Agents
 
-| Agent | Path | Purpose |
-|-------|------|---------|
-| design-validator | @agents/design-validator.md | Tasarım bütünlüğünü doğrula |
-| design-analyst | @agents/design-analyst.md | Implementation spec oluştur |
-| asset-manager | @agents/asset-manager.md | Asset'leri indir ve organize et |
-| code-generator-react | @agents/code-generator-react.md | React/Tailwind kodu üret |
-| code-generator-swiftui | @agents/code-generator-swiftui.md | SwiftUI kodu üret |
-| code-generator-vue | @agents/code-generator-vue.md | Vue 3 kodu üret (v1.2.0) |
-| code-generator-kotlin | @agents/code-generator-kotlin.md | Kotlin Compose kodu üret (v1.2.0) |
-| compliance-checker | @agents/compliance-checker.md | Spec'e uyumu doğrula |
-| font-manager | @agents/font-manager.md | Font'ları indir ve kur |
+| Agent | Path | Purpose | Status |
+|-------|------|---------|--------|
+| design-validator | @agents/design-validator.md | Tasarım bütünlüğünü doğrula | ✅ Active |
+| design-analyst | @agents/design-analyst.md | Implementation spec oluştur | ✅ Active |
+| asset-manager | @agents/asset-manager.md | Asset'leri indir ve organize et | ✅ Active |
+| code-generator-react | @agents/code-generator-react.md | React/Tailwind kodu üret | ✅ Active |
+| code-generator-swiftui | @agents/code-generator-swiftui.md | SwiftUI kodu üret | ✅ Active |
+| code-generator-vue | @agents/code-generator-vue.md | Vue 3 kodu üret | 🚧 Placeholder |
+| code-generator-kotlin | @agents/code-generator-kotlin.md | Kotlin Compose kodu üret | 🚧 Placeholder |
+| compliance-checker | @agents/compliance-checker.md | Spec'e uyumu doğrula | ✅ Active |
+| font-manager | @agents/font-manager.md | Font'ları indir ve kur | ✅ Active |
+
+> **Note:** Vue ve Kotlin generator'ları gelecek sürümler için planlanmıştır. Şu an için React veya SwiftUI generator'larını kullanın.
 
 ## References (Lazy Load)
 

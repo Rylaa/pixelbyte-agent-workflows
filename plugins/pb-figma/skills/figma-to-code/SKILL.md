@@ -46,10 +46,10 @@ Figma URL
 +---------------------------------------------+
 | 4. Framework Detection & Routing            |
 +---------------------------------------------+
-| -> React/Next.js  -> code-generator-react   |
-| -> SwiftUI        -> code-generator-swiftui |
-| -> Vue/Nuxt       -> code-generator-vue     |
-| -> Kotlin/Compose -> code-generator-kotlin  |
+| -> React/Next.js  -> code-generator-react   | ✅
+| -> SwiftUI        -> code-generator-swiftui | ✅
+| -> Vue/Nuxt       -> code-generator-vue     | 🚧 Placeholder
+| -> Kotlin/Compose -> code-generator-kotlin  | 🚧 Placeholder
 +---------------------------------------------+
     |
     v
@@ -86,10 +86,13 @@ Task(subagent_type="pb-figma:compliance-checker",
 
 Before dispatching code generator (Step 4):
 
-1. **Swift/Xcode:** `ls *.xcodeproj *.xcworkspace Package.swift` -> `code-generator-swiftui`
-2. **Android/Kotlin:** Find `build.gradle.kts` with `androidx.compose` -> `code-generator-kotlin`
-3. **Node.js:** Check `package.json` for react/next/vue/nuxt -> route accordingly
-4. **Default:** `code-generator-react` with warning
+1. **Swift/Xcode:** `ls *.xcodeproj *.xcworkspace Package.swift` -> `code-generator-swiftui` ✅
+2. **Android/Kotlin:** Find `build.gradle.kts` with `androidx.compose` -> `code-generator-kotlin` 🚧 (placeholder, use React)
+3. **Node.js:** Check `package.json` for react/next -> `code-generator-react` ✅
+4. **Vue/Nuxt:** Check `package.json` for vue/nuxt -> `code-generator-vue` 🚧 (placeholder, use React)
+5. **Default:** `code-generator-react` with warning
+
+> **Note:** Vue and Kotlin generators are planned for future releases. Currently, use React or SwiftUI generators.
 
 ## Report Directory
 

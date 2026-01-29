@@ -13,10 +13,12 @@ tools:
 
 ## Reference Loading
 
+**How to load references:** Use `Glob("**/references/{filename}.md")` to find the absolute path, then `Read()` the result. Do NOT use `@skills/...` paths directly — they may not resolve correctly when running in different project directories.
+
 Load these references when needed:
-- Code Connect guide: @skills/figma-to-code/references/code-connect-guide.md
-- Mapping planning prompt: @skills/figma-to-code/references/prompts/mapping-planning.md
-- Error recovery: @skills/figma-to-code/references/error-recovery.md
+- Code Connect guide: `code-connect-guide.md` → Glob: `**/references/code-connect-guide.md`
+- Mapping planning prompt: `mapping-planning.md` → Glob: `**/references/prompts/mapping-planning.md`
+- Error recovery: `error-recovery.md` → Glob: `**/references/error-recovery.md`
 
 # Design Analyst Agent
 
@@ -92,7 +94,7 @@ For each component, identify:
 
 #### Card/List Item Icon Classification
 
-See: @skills/figma-to-code/references/asset-classification-guide.md for full classification rules.
+See reference: `asset-classification-guide.md` (Glob: `**/references/asset-classification-guide.md`) for full classification rules.
 
 **CRITICAL:** Classify icons by their POSITION in the layout:
 
@@ -499,7 +501,7 @@ Read the Colors table from Validation Report including Fill Opacity column.
 .background(Color(hex: "#f2f20d").opacity(0.05))
 ```
 
-**Reference:** @skills/figma-to-code/references/opacity-extraction.md
+**Reference:** `opacity-extraction.md` (Glob: `**/references/opacity-extraction.md`)
 
 **Key rule:** Always calculate `effectiveOpacity = fillOpacity * nodeOpacity`
 
@@ -878,7 +880,7 @@ For each component identified in the hierarchy:
 
 ### 6. Layer Order Analysis
 
-See: @skills/figma-to-code/references/layer-order-hierarchy.md
+See reference: `layer-order-hierarchy.md` (Glob: `**/references/layer-order-hierarchy.md`)
 
 **Key rule:** Use children array order, NOT Y coordinate.
 

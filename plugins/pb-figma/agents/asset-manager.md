@@ -144,7 +144,7 @@ For each asset in the "Assets Required" table, classify the asset type and use t
    - Check for imageRef property
    - Apply classification table below
 
-See: @skills/figma-to-code/references/asset-classification-guide.md
+See reference: `asset-classification-guide.md` (Glob: `**/references/asset-classification-guide.md`)
 
 **Quick reference - Asset Types:**
 
@@ -560,7 +560,7 @@ Asset directory: `public/assets/`
 
 ## Error Handling
 
-**Reference:** `skills/figma-to-code/references/error-recovery.md`
+**Reference:** `error-recovery.md` (Glob: `**/references/error-recovery.md`)
 
 ### Download Recovery
 

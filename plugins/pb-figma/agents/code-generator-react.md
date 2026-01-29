@@ -14,12 +14,14 @@ tools:
 
 ## Reference Loading
 
+**How to load references:** Use `Glob("**/references/{filename}.md")` to find the absolute path, then `Read()` the result. Do NOT use `@skills/...` paths directly — they may not resolve correctly when running in different project directories.
+
 Load these references when needed:
-- Token mapping: @skills/figma-to-code/references/token-mapping.md
-- Common issues: @skills/figma-to-code/references/common-issues.md
-- Test generation: @skills/figma-to-code/references/test-generation.md
-- Storybook integration: @skills/figma-to-code/references/storybook-integration.md
-- Error recovery: @skills/figma-to-code/references/error-recovery.md
+- Token mapping: `token-mapping.md` → Glob: `**/references/token-mapping.md`
+- Common issues: `common-issues.md` → Glob: `**/references/common-issues.md`
+- Test generation: `test-generation.md` → Glob: `**/references/test-generation.md`
+- Storybook integration: `storybook-integration.md` → Glob: `**/references/storybook-integration.md`
+- Error recovery: `error-recovery.md` → Glob: `**/references/error-recovery.md`
 
 # React/Next.js Code Generator Agent
 
@@ -421,7 +423,7 @@ Options:
 
 ## Layer Order Parsing
 
-See: @skills/figma-to-code/references/layer-order-hierarchy.md
+See reference: `layer-order-hierarchy.md` (Glob: `**/references/layer-order-hierarchy.md`)
 
 **Key rule:** Use children array order, not Y coordinate.
 

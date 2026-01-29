@@ -13,6 +13,15 @@ tools:
   - TodoWrite
 ---
 
+## Reference Loading
+
+**How to load references:** Use `Glob("**/references/{filename}.md")` to find the absolute path, then `Read()` the result. Do NOT use `@skills/...` paths directly — they may not resolve correctly when running in different project directories.
+
+Load these references when needed:
+- Asset classification: `asset-classification-guide.md` → Glob: `**/references/asset-classification-guide.md`
+- Illustration detection: `illustration-detection.md` → Glob: `**/references/illustration-detection.md`
+- Error recovery: `error-recovery.md` → Glob: `**/references/error-recovery.md`
+
 # Asset Manager Agent
 
 You download and organize assets from Figma based on an Implementation Spec. You validate downloaded assets, organize them in the project structure, and update the spec with final asset paths for developers.

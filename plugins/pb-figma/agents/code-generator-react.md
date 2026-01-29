@@ -575,7 +575,7 @@ Replace hardcoded values with CSS custom properties or Tailwind tokens from the 
 
 Read gradient from Implementation Spec "Text with Gradient" or "Background Gradient" section and map to CSS/Tailwind.
 
-- Gradient types, CSS/Tailwind mapping, angle conversion, and code examples: `@skills/figma-to-code/references/gradient-handling.md`
+> **Reference:** @skills/figma-to-code/references/gradient-handling.md — Gradient types, CSS/Tailwind mapping, angle conversion, and code examples.
 
 **Workflow:**
 1. Read gradient type and all stops from Implementation Spec

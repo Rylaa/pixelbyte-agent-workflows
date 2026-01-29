@@ -272,8 +272,8 @@ if (overrides && overrides.length > 0 && overrides.some(v => v !== 0)) {
       return hex;
     }).join(', ') || 'inherited';
     const decoration = style.textDecoration || 'NONE';
-    // Reference: @skills/figma-to-code/references/text-decoration.md — Maps Figma textDecoration values to CSS/SwiftUI equivalents.
     return `${idx}: fills: ${fills}, decoration: ${decoration}`;
+    // ↑ See @skills/figma-to-code/references/text-decoration.md for decoration value mapping
   });
 
   // Flag for design-analyst

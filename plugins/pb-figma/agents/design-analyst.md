@@ -531,7 +531,7 @@ Read the Colors table from Validation Report including Fill Opacity column.
 
 Extract gradient fills from text nodes via `figma_get_node_details`. Check `fills[].type` for gradient types and extract all gradient stops with exact positions.
 
-- Gradient types, extraction rules, and platform mapping: `@skills/figma-to-code/references/gradient-handling.md`
+> **Reference:** @skills/figma-to-code/references/gradient-handling.md — Gradient types, extraction rules, and platform mapping.
 
 **Workflow:**
 1. Use `figma_get_node_details` (NOT `figma_get_design_tokens`) to get the `fills` array

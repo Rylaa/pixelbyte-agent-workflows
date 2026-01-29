@@ -775,7 +775,7 @@ if #available(iOS 26.0, *) {
 3. For containers: use `.glassEffect(.regular)` with `.tint()`
 4. Fallback uses `.ultraThinMaterial` as background + overlay with the tint color at original opacity
 5. If corner radius >= height/2, use `Capsule()` instead of `RoundedRectangle`
-6. Glass Tint color comes from the spec's `Glass Tint` property
+6. Glass Tint color comes from the spec's `Glass Tint` property (produced by design-analyst when `fill.opacity <= 0.3 AND cornerRadius > 0`)
 
 ## Layer Order Parsing
 

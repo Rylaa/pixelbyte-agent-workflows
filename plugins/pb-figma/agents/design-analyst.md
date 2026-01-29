@@ -344,7 +344,10 @@ IF fill.opacity <= 0.3 AND fill.opacity > 0 AND cornerRadius > 0:
 | **Children** | ButtonLabel |
 ```
 
-The code generator should use iOS 26+ `.glassEffect()` with backward-compatible fallback for this pattern.
+The code generator handles Glass Effect in two patterns:
+- **Buttons:** `.buttonStyle(.glassProminent)` with `.tint()` for the Glass Tint color (iOS 26+)
+- **Containers:** `.glassEffect(.regular)` with `.tint()` (iOS 26+)
+- **Fallback (iOS < 26):** `.ultraThinMaterial` background + overlay with Glass Tint color at original opacity
 
 **Example Component with Complete Dimensions and Auto Layout:**
 

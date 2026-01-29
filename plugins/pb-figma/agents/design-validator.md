@@ -124,6 +124,8 @@ Always run this step even if `figma_list_assets` returns results. Never assume a
 
 ### 4. Frame Properties
 
+> **Reference:** @skills/figma-to-code/references/frame-properties.md — Canonical frame property extraction rules including dimensions, corner radii, and stroke formats.
+
 **CRITICAL:** Extract frame properties for ALL container nodes (FRAME, COMPONENT, INSTANCE types).
 
 For each container, extract via `figma_get_node_details`:
@@ -145,6 +147,8 @@ For each container, extract via `figma_get_node_details`:
 
 ### 5. Fill Opacity Extraction
 
+> **Reference:** @skills/figma-to-code/references/color-extraction.md — Comprehensive color extraction rules including hex conversion, opacity handling, and gradient formats.
+
 **CRITICAL:** For each fill color, extract BOTH the hex color AND fill opacity separately.
 
 From `figma_get_node_details`, extract per fill:
@@ -152,6 +156,8 @@ From `figma_get_node_details`, extract per fill:
 - `fill.opacity` -> fill-level opacity (default 1.0)
 - `nodeDetails.opacity` -> node-level opacity (default 1.0)
 - `effectiveOpacity = fillOpacity * nodeOpacity`
+
+> **Reference:** @skills/figma-to-code/references/opacity-extraction.md — Rules for extracting and combining fill-level and node-level opacity into effective opacity values.
 
 **Color Table Requirements:**
 - Fill Opacity column is MANDATORY for all colors
@@ -173,6 +179,9 @@ If any data is unclear or missing:
 4. Document what could NOT be resolved
 
 ### 7. Illustrations & Charts
+
+> **Reference:** @skills/figma-to-code/references/illustration-detection.md — Heuristics for distinguishing illustrations from icons based on size, child count, and export settings.
+
 - [ ] Nodes with `exportSettings` identified
 - [ ] Large vector groups (>50px, >=3 children) marked as illustrations
 - [ ] Illustrations NOT classified as icons
@@ -263,6 +272,7 @@ if (overrides && overrides.length > 0 && overrides.some(v => v !== 0)) {
       return hex;
     }).join(', ') || 'inherited';
     const decoration = style.textDecoration || 'NONE';
+    // Reference: @skills/figma-to-code/references/text-decoration.md — Maps Figma textDecoration values to CSS/SwiftUI equivalents.
     return `${idx}: fills: ${fills}, decoration: ${decoration}`;
   });
 
@@ -427,6 +437,9 @@ Write to: `docs/figma-reports/{file_key}-validation.md`
 | spacing-md | 16px |
 
 ### Effects
+
+> **Reference:** @skills/figma-to-code/references/shadow-blur-effects.md — Shadow and blur effect extraction rules and output formats.
+
 | Name | Type | Properties |
 |------|------|------------|
 | shadow-sm | drop-shadow | 0 1px 2px rgba(0,0,0,0.05) |
@@ -475,6 +488,8 @@ Ready for: Design Analyst Agent
 | Missing tokens | Continue with fallback values |
 
 ### Fallback Values
+
+> **Reference:** @skills/figma-to-code/references/font-handling.md — Font family mapping, weight resolution, and fallback font stack rules.
 
 If design tokens cannot be extracted:
 

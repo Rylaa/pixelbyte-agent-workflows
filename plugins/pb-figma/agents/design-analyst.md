@@ -137,6 +137,8 @@ See reference: `asset-classification-guide.md` (Glob: `**/references/asset-class
 
 #### Asset Children Marking
 
+> **Reference:** @skills/figma-to-code/references/asset-node-mapping.md — Maps Figma node types to asset export formats and code-generation patterns.
+
 **CRITICAL:** When a component contains children that are in the "Assets Required" table, mark them explicitly in the Component output.
 
 **Format:** `IMAGE:asset-name:NodeID:width:height`
@@ -180,6 +182,9 @@ Example:
 ```
 
 **2. Size Validation:**
+
+> **Reference:** @skills/figma-to-code/references/illustration-detection.md — Size-based illustration vs. icon classification and decorative element detection heuristics.
+
 ```
 Card icon size limits:
 - Minimum: 16px (both dimensions)
@@ -220,6 +225,8 @@ If no valid icon found at expected position:
 ```
 
 ### 1.5 Read Frame Properties from Validation Report
+
+> **Reference:** @skills/figma-to-code/references/frame-properties.md — Detailed frame property extraction, corner radius parsing, and border mapping rules.
 
 **CRITICAL:** Copy frame properties from Validation Report to each component.
 
@@ -396,6 +403,9 @@ For each component, determine:
 | Fixed overlay | Position fixed | `fixed` |
 
 #### Responsive Behavior
+
+> **Reference:** @skills/figma-to-code/references/responsive-patterns.md — Responsive constraint mapping, breakpoint strategies, and fill/hug content behavior.
+
 - **Fixed width**: Element has explicit width constraint
 - **Fill container**: Element stretches to parent (`flex-1`, `w-full`)
 - **Hug contents**: Element sizes to content (`w-fit`, `h-fit`)
@@ -424,6 +434,9 @@ text: #1F2937 → --color-text: #1F2937 → text-[var(--color-text)] or text-gra
 ```
 
 #### Typography
+
+> **Reference:** @skills/figma-to-code/references/font-handling.md — Font family resolution, weight mapping, line-height calculation, and platform font stacks.
+
 ```
 Figma → CSS → Tailwind
 
@@ -449,6 +462,9 @@ Non-standard → arbitrary value [Xpx]
 ```
 
 #### Effects
+
+> **Reference:** @skills/figma-to-code/references/shadow-blur-effects.md — Shadow and blur effect extraction, Tailwind mapping, and SwiftUI shadow modifiers.
+
 ```
 Shadow → Tailwind
 
@@ -467,6 +483,8 @@ Custom → rounded-[Xpx]
 ```
 
 #### Colors with Opacity
+
+> **Reference:** @skills/figma-to-code/references/color-extraction.md — Color extraction with opacity, effective opacity calculation, and SwiftUI color mapping.
 
 Read the Colors table from Validation Report including Fill Opacity column.
 
@@ -523,6 +541,8 @@ Extract gradient fills from text nodes via `figma_get_node_details`. Check `fill
 5. Add platform requirement (iOS 15+) and performance warnings to Compliance section
 
 #### Text Decoration Detection
+
+> **Reference:** @skills/figma-to-code/references/text-decoration.md — Text decoration extraction, REST API limitations, and SwiftUI mapping rules.
 
 Extract text decoration (underline, strikethrough) from text nodes via `figma_get_node_details`:
 
@@ -868,6 +888,8 @@ Implementation Spec should include the same section after Assets Required:
 
 ### 8. Image-with-Text Suppression (CRITICAL)
 
+> **Reference:** @skills/figma-to-code/references/image-with-text.md — Image-with-text suppression rules, detection workflow, and code-generator signals.
+
 **Problem:** When a node is flagged as `DOWNLOAD_AS_IMAGE`, its text children are already "baked into" the exported image. If these text children also appear as separate components in the spec, the code-generator will create duplicate `Text()` elements alongside `Image()`.
 
 **Detection Rule:**
@@ -1136,6 +1158,9 @@ Input file: `docs/figma-reports/{file_key}-spec.md`
 - **Asset filenames**: kebab-case (e.g., `hero-image.webp`, `icon-search.svg`)
 
 ### HTML Semantics
+
+> **Reference:** @skills/figma-to-code/references/accessibility-patterns.md — ARIA attribute mapping, landmark element selection, and keyboard navigation patterns.
+
 - Always prefer semantic HTML elements over generic `<div>`
 - Use landmark elements (`<nav>`, `<main>`, `<header>`, `<footer>`)
 - Apply appropriate ARIA attributes for accessibility

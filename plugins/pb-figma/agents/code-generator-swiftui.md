@@ -95,6 +95,8 @@ Options:
 
 ## Asset Node Map
 
+> **Reference:** @skills/figma-to-code/references/asset-node-mapping.md — Canonical rules for parsing Asset Children entries and building the assetNodeMap used during code generation.
+
 **CRITICAL:** Before generating code, build a map of asset nodes that should become Image() calls.
 
 ### Step 1: Parse Asset Children from Spec
@@ -183,6 +185,8 @@ Image("{asset-name}")
 
 ### Illustration vs Icon Detection
 
+> **Reference:** @skills/figma-to-code/references/illustration-detection.md — Heuristics for distinguishing icons from illustrations based on dimensions, flagged frames, and asset type classification.
+
 Determine asset type from dimensions and apply the corresponding template from above:
 
 | Dimension | Type | Use Template |
@@ -197,6 +201,8 @@ If asset was in "Flagged for LLM Review" and decided as DOWNLOAD_AS_IMAGE:
 - Consider adding `.cornerRadius()` if parent has border radius
 
 ### Image-with-Text Detection
+
+> **Reference:** @skills/figma-to-code/references/image-with-text.md — Detection algorithm and code generation rules for illustration assets that already contain embedded text labels.
 
 > **See also:** [Image-with-Text Handling](#image-with-text-handling) (Step 1.5) for processing the `[contains-text]` annotation produced by design-analyst. This section handles heuristic detection from Flagged Frames; the Step 1.5 section handles the explicit annotation during Asset Children replacement.
 
@@ -315,6 +321,8 @@ struct GrowthSectionView: View {
 ```
 
 ## Frame Properties Map
+
+> **Reference:** @skills/figma-to-code/references/frame-properties.md — Dimensions, corner radius, border, and stroke alignment mapping from Figma spec to SwiftUI modifiers.
 
 Extract frame properties from each component to apply correct modifiers.
 
@@ -520,6 +528,8 @@ Color(hex: "#40FFFFFF")  // Extension parses as ARGB: alpha=0x40, RGB=FFFFFF
 
 ### Colors
 
+> **Reference:** @skills/figma-to-code/references/color-extraction.md — Hex-to-SwiftUI color conversion, opacity handling, ARGB parsing, and design token color mapping.
+
 | Property | Color | Opacity | Usage |
 |----------|-------|---------|-------|
 | Border | #FFFFFF | 0.4 | `.stroke(Color.white.opacity(0.4))` |
@@ -625,6 +635,8 @@ struct GrowthSectionView: View {
 6. Include `Color+Hex` extension when using hex colors
 
 **CRITICAL - Modifier Ordering:**
+
+> **Reference:** @skills/figma-to-code/references/shadow-blur-effects.md — Shadow and blur effect extraction, modifier ordering, and SwiftUI shadow/blur code patterns.
 
 SwiftUI modifiers apply in order. The correct sequence for frame properties:
 
@@ -953,6 +965,8 @@ Color.primary
 
 ##### Apply Opacity from Spec
 
+> **Reference:** @skills/figma-to-code/references/opacity-extraction.md — Opacity calculation details, layer vs fill opacity, and SwiftUI .opacity() modifier rules.
+
 See reference: `opacity-extraction.md` (Glob: `**/references/opacity-extraction.md`) for calculation details.
 
 **Copy Usage column from Design Tokens table** - it contains the complete SwiftUI modifier chain.
@@ -984,6 +998,8 @@ Read gradient from Implementation Spec "Text with Gradient" section and map to S
 6. Add `@available(iOS 15.0, *)` if needed (`.foregroundStyle()` requires iOS 15+)
 
 ##### Apply Text Decoration from Spec
+
+> **Reference:** @skills/figma-to-code/references/text-decoration.md — Underline and strikethrough mapping, iOS version guards, color/opacity rules, and common mistakes.
 
 Read text decoration from the **"Text Decoration"** section of Implementation Spec and apply `.underline()` or `.strikethrough()` modifiers with color from spec.
 
@@ -1413,6 +1429,8 @@ struct ButtonView: View {
 
 ##### Add Accessibility
 
+> **Reference:** @skills/figma-to-code/references/accessibility-patterns.md — VoiceOver labels, hints, traits, Dynamic Type, and WCAG contrast requirements for SwiftUI components.
+
 Include accessibility modifiers for VoiceOver:
 
 ```swift
@@ -1682,6 +1700,8 @@ struct CardView_Previews: PreviewProvider {
 When generating SwiftUI code, include these helper extensions if needed.
 
 ### Color+Hex Extension
+
+> **Reference:** @skills/figma-to-code/references/font-handling.md — Font weight mapping, system font sizing, and typography token conversion from Figma to SwiftUI.
 
 If any generated code uses `Color(hex:)`, include this extension:
 

@@ -52,6 +52,8 @@ Use `TodoWrite` to track code generation progress through these steps:
 
 ## Asset Node Map
 
+> **Reference:** @skills/figma-to-code/references/asset-node-mapping.md — Comprehensive asset-to-code mapping rules for images, icons, and illustrations.
+
 **CRITICAL:** Before generating code, build a map of asset nodes that should become `<Image>` or `<img>` tags.
 
 ### Step 1: Parse Asset Children from Spec
@@ -66,6 +68,9 @@ For each component in "## Components" section:
 ```
 
 **Example assetNodeMap:**
+
+> **Reference:** @skills/figma-to-code/references/illustration-detection.md — Heuristics for distinguishing icons vs illustrations by size, type, and naming patterns.
+
 ```json
 {
   "3:230": { "name": "icon-clock", "width": 32, "height": 32 },
@@ -184,6 +189,8 @@ import ClockIcon from '@/assets/icons/clock.svg';
 | img tag | Simple icons without color control |
 
 ## Frame Properties Map
+
+> **Reference:** @skills/figma-to-code/references/frame-properties.md — Detailed dimension, corner radius, and border extraction rules with Tailwind mapping.
 
 **CRITICAL:** Extract frame properties from each component to apply correct Tailwind classes.
 
@@ -555,6 +562,8 @@ Replace hardcoded values with CSS custom properties or Tailwind tokens from the 
 
 **Common opacity conversions:**
 
+> **Reference:** @skills/figma-to-code/references/color-extraction.md — Color format parsing, hex-alpha conversion, and opacity-to-Tailwind mapping rules.
+
 | Hex Alpha | Decimal | Tailwind |
 |-----------|---------|----------|
 | 40 (0x40) | 0.25 | `/25` |
@@ -576,6 +585,8 @@ Read gradient from Implementation Spec "Text with Gradient" or "Background Gradi
 5. Prefer Tailwind utilities for simple gradients (2-3 colors, standard angles); use style prop for complex ones (4+ colors, precise positions)
 
 ##### Apply Text Decoration from Spec
+
+> **Reference:** @skills/figma-to-code/references/text-decoration.md — Underline, strikethrough, and decoration color/thickness Tailwind patterns.
 
 Read text decoration from the **"Text Decoration"** section of Implementation Spec.
 
@@ -678,6 +689,8 @@ export interface ButtonProps {
 
 ##### Add Accessibility
 
+> **Reference:** @skills/figma-to-code/references/accessibility-patterns.md — ARIA attributes, focus states, alt text, and keyboard navigation patterns.
+
 Include ARIA attributes and focus states:
 
 ```tsx
@@ -715,6 +728,9 @@ Include ARIA attributes and focus states:
 | Photo/illustration | next/image | `<Image src="/photo.jpg" />` |
 
 **lucide-react pattern:**
+
+> **Reference:** @skills/figma-to-code/references/font-handling.md — Font family detection, fallback stacks, and custom font integration patterns.
+
 ```tsx
 import { Check, X, ChevronRight, Search } from 'lucide-react';
 
@@ -1089,6 +1105,8 @@ export const {ComponentName}: React.FC<{ComponentName}Props> = ({
 - Use semantic HTML elements appropriately
 
 ## Responsive Patterns
+
+> **Reference:** @skills/figma-to-code/references/responsive-patterns.md — Figma constraint-to-Tailwind breakpoint mapping and responsive layout strategies.
 
 Map Figma constraints and breakpoints to Tailwind responsive prefixes.
 

@@ -160,6 +160,8 @@ See reference: `asset-classification-guide.md` (Glob: `**/references/asset-class
 
 #### 2.1.1 Composite Illustration Detection (CRITICAL)
 
+> **Reference:** @skills/figma-to-code/references/illustration-detection.md — Illustration detection heuristics, LLM vision analysis, and export format decisions
+
 **Problem:** Multi-layer illustrations may have shadow/background layers with dark fills that get exported instead of the visually dominant layer.
 
 **Detection Process:**
@@ -452,6 +454,8 @@ Move validated assets to their final locations:
 - Prefix complex vectors with descriptive name: `chart-growth.png`, `illustration-hero.png`
 - Include size suffix for multiple resolutions: `hero-image-2x.png`
 - Distinguish complex vectors from icons: Use semantic names (chart, graph, illustration) not `icon-`
+
+> **Reference:** @skills/figma-to-code/references/illustration-detection.md — Illustration detection heuristics, LLM vision analysis, and export format decisions
 
 ### 5. Update Spec
 

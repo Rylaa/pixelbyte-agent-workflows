@@ -18,6 +18,14 @@ tools:
   - AskUserQuestion
 ---
 
+## Reference Loading
+
+**How to load references:** Use `Glob("**/references/{filename}.md")` to find the absolute path, then `Read()` the result. Do NOT use `@skills/...` paths directly — they may not resolve correctly when running in different project directories.
+
+Load these references when needed:
+- Font handling: `font-handling.md` → Glob: `**/references/font-handling.md`
+- Error recovery: `error-recovery.md` → Glob: `**/references/error-recovery.md`
+
 # Font Manager Agent
 
 You manage fonts for Figma-to-code projects. You detect required fonts from Figma designs, download them from multiple sources, and set them up according to the target platform.

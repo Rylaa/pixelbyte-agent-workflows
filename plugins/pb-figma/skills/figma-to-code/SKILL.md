@@ -7,7 +7,7 @@ description: This skill handles pixel-perfect Figma design conversion to product
 
 ## Documentation Index
 
-For detailed references, see @docs-index.md
+For detailed references, load via Glob: `**/docs-index.md`
 
 ## CRITICAL: Agent Invocation Required
 
@@ -132,13 +132,13 @@ NOTE: URL format "456-789" must be used as "456:789"!
 
 ## References
 
-For detailed information on specific topics:
+**How to load references:** Use `Glob("**/references/{filename}.md")` to find the absolute path, then `Read()` the result.
 
-| Topic | Reference |
-|-------|-----------|
-| Token conversion | @references/token-mapping.md |
-| Common issues | @references/common-issues.md |
-| Visual validation | @references/visual-validation-loop.md |
-| Error recovery | @references/error-recovery.md |
-| Figma MCP tools | @references/figma-mcp-server.md |
-| Code Connect | @references/code-connect-guide.md |
+| Topic | Reference File | Glob Pattern |
+|-------|---------------|--------------|
+| Token conversion | `token-mapping.md` | `**/references/token-mapping.md` |
+| Common issues | `common-issues.md` | `**/references/common-issues.md` |
+| Visual validation | `visual-validation-loop.md` | `**/references/visual-validation-loop.md` |
+| Error recovery | `error-recovery.md` | `**/references/error-recovery.md` |
+| Figma MCP tools | `figma-mcp-server.md` | `**/references/figma-mcp-server.md` |
+| Code Connect | `code-connect-guide.md` | `**/references/code-connect-guide.md` |

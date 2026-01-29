@@ -564,6 +564,9 @@ Compare Figma screenshot with browser screenshot:
 | Dimensions | ±2px | Width, height match frame properties |
 | Corner Radius | Exact match | All corners match spec values |
 | Shadows/Effects | Visual match | Shadow offset, blur, spread, color match |
+| Edge-to-Edge | Structure match | Children marked Edge-to-Edge extend full width without horizontal padding |
+| Glass Effect | Visual match | Glass/translucent elements render with proper material effect |
+| Clip Behavior | Overflow clipped | clipContent containers properly clip overflowing children |
 
 ### 3. Visual Match Determination
 
@@ -574,6 +577,44 @@ Compare Figma screenshot with browser screenshot:
 - **≥95% match**: Component can proceed to PASS evaluation
 - **85-94% match**: Mark as WARN with visual diff notes
 - **<85% match**: Mark as FAIL - requires code fixes
+
+### Structural Layout Validation
+
+Beyond visual comparison, validate these structural patterns:
+
+**Edge-to-Edge Padding Check:**
+```
+For each component with Edge-to-Edge: true in spec:
+1. Verify the child view has NO .padding(.horizontal) applied
+2. Verify sibling views DO have .padding(.horizontal) matching parent's padding value
+3. Verify parent does NOT have .padding(.horizontal) as a universal modifier
+```
+
+If edge-to-edge child has horizontal padding → Mark as **FAIL** with:
+- Issue: "Edge-to-edge child has incorrect horizontal padding"
+- Expected: "No horizontal padding on edge-to-edge child"
+- Actual: "`.padding(.horizontal, X)` applied"
+
+**Glass Effect Check:**
+```
+For each component with Glass Effect: true in spec:
+1. Verify #available(iOS 26.0, *) check exists
+2. Verify .glassEffect() or .buttonStyle(.glass/.glassProminent) used in iOS 26+ branch
+3. Verify .ultraThinMaterial fallback exists in else branch
+4. Verify Glass Tint color matches spec value
+```
+
+If glass effect missing → Mark as **FAIL** with:
+- Issue: "Glass effect not implemented"
+- Expected: "iOS 26 .glassEffect() with .ultraThinMaterial fallback"
+- Actual: "{what was found instead}"
+
+**ClipContent Check:**
+```
+For each parent with clipContent: true in Figma:
+1. Verify .clipped() modifier present on parent
+2. Verify edge-to-edge or overflowing children are inside clipped parent
+```
 
 ### 4. Document Visual Verification
 

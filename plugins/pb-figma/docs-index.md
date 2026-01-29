@@ -31,6 +31,8 @@
 | Token Mapping | @skills/figma-to-code/references/token-mapping.md | code-generator-* |
 | Common Issues | @skills/figma-to-code/references/common-issues.md | code-generator-* |
 | Error Recovery | @skills/figma-to-code/references/error-recovery.md | all agents |
+| Pipeline Handoff | @skills/figma-to-code/references/pipeline-handoff.md | all agents |
+| Pipeline Config | @skills/figma-to-code/references/pipeline-config.md | all agents |
 
 ### Validation References
 | Topic | Path | Used By |

@@ -219,21 +219,27 @@ Pipeline should stop if:
 - User cancels
 ```
 
-### Checkpoint System
+### Checkpoint System (Planned)
+
+> ⚠️ **Status:** This checkpoint system is documented as a future feature. Currently, pipeline state is passed through spec files (`{file_key}-spec.md`). Agents do not yet produce `.qa/checkpoint-*.json` files.
+
+**Future Implementation:**
+
+When implemented, save intermediate state after each phase:
 
 ```
-After each agent:
-1. Save intermediate report
-2. Log success/failure
-3. Check continue conditions
-4. Allow resume from checkpoint
-
-Checkpoints:
-- .qa/checkpoint-1-validation.json
-- .qa/checkpoint-2-spec.json
-- .qa/checkpoint-3-assets.json
-- .qa/checkpoint-4-code.json
+.qa/checkpoint-1-validation.json    (Phase 1)
+.qa/checkpoint-2-spec.json          (Phase 2)
+.qa/checkpoint-3-assets.json        (Phase 3)
+.qa/checkpoint-4-code.json          (Phase 4)
 ```
+
+**Current Recovery Mechanism:**
+
+Pipeline currently recovers by:
+1. Re-reading the spec file from `docs/figma-reports/`
+2. Checking which sections are already populated
+3. Resuming from the last completed phase
 
 ---
 

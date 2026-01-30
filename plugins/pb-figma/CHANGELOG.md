@@ -2,6 +2,17 @@
 
 All notable changes to the pb-figma plugin will be documented in this file.
 
+## [1.15.1] - 2026-01-30
+
+### Fixed
+- **Checkpoint Naming Conflict** - code-generator-react and code-generator-swiftui now write framework-specific checkpoint files (`checkpoint-4-code-generator-react.json` / `-swiftui.json`)
+- **Orphaned Reference Headers** - Updated `Used by` headers for `figma-mcp-server.md`, `pipeline-config.md`, `pipeline-handoff.md` to reflect actual usage
+- **CHANGELOG Dedup Attribution** - Clarified that dedup consolidation was done in v1.10.0
+- **plugin.json Version Mismatch** - Synced plugin.json version with CHANGELOG (was 1.17.0)
+- **asset-manager Frontmatter** - Removed non-standard `model: sonnet` field
+- **SKILL.md References** - Added docs-index.md pointer for complete reference catalog
+- **docs-index.md Used-by** - Synced columns with actual agent references
+
 ## [1.15.0] - 2026-01-30
 
 ### Added

@@ -258,7 +258,7 @@ Each pipeline agent writes a JSON checkpoint to `.qa/checkpoint-{N}-{agent}.json
 | 1 | `checkpoint-1-design-validator.json` | design-validator |
 | 2 | `checkpoint-2-design-analyst.json` | design-analyst |
 | 3 | `checkpoint-3-asset-manager.json` | asset-manager |
-| 4 | `checkpoint-4-code-generator.json` | code-generator-* |
+| 4 | `checkpoint-4-code-generator-{framework}.json` | code-generator-* |
 | 5 | `checkpoint-5-compliance-checker.json` | compliance-checker |
 
 **Clean start:** Delete `.qa/checkpoint-*.json` to force full pipeline re-run.

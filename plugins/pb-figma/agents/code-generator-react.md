@@ -1023,7 +1023,7 @@ After successfully generating all components and updating the spec, write a chec
 mkdir -p .qa
 ```
 
-Write to `.qa/checkpoint-4-code-generator.json`:
+Write to `.qa/checkpoint-4-code-generator-react.json`:
 ```json
 {
   "phase": 4,

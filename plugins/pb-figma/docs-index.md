@@ -31,8 +31,8 @@
 | Token Mapping | @skills/figma-to-code/references/token-mapping.md | code-generator-* |
 | Common Issues | @skills/figma-to-code/references/common-issues.md | code-generator-* |
 | Error Recovery | @skills/figma-to-code/references/error-recovery.md | all agents |
-| Pipeline Handoff | @skills/figma-to-code/references/pipeline-handoff.md | all agents |
-| Pipeline Config | @skills/figma-to-code/references/pipeline-config.md | all agents |
+| Pipeline Handoff | @skills/figma-to-code/references/pipeline-handoff.md | not yet referenced by any agent |
+| Pipeline Config | @skills/figma-to-code/references/pipeline-config.md | not yet referenced by any agent |
 | Framework Detection | @skills/figma-to-code/references/framework-detection.md | code-generator-react, code-generator-swiftui, SKILL.md |
 
 ### Validation References
@@ -69,7 +69,7 @@
 | Topic | Path | Used By |
 |-------|------|---------|
 | Code Connect Guide | @skills/figma-to-code/references/code-connect-guide.md | design-analyst |
-| Figma MCP Server | @skills/figma-to-code/references/figma-mcp-server.md | all agents |
+| Figma MCP Server | @skills/figma-to-code/references/figma-mcp-server.md | SKILL.md (reference table) |
 | Preview Setup | @skills/figma-to-code/references/preview-setup.md | compliance-checker |
 | Test Generation | @skills/figma-to-code/references/test-generation.md | code-generator-* |
 | Testing Strategy | @skills/figma-to-code/references/testing-strategy.md | code-generator-* |

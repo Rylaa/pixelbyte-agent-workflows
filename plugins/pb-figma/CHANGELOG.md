@@ -14,8 +14,8 @@ All notable changes to the pb-figma plugin will be documented in this file.
 
 ### Changed
 - **compliance-checker Pre-Check** - Reads self-verification results from spec to skip redundant checks (focus on WARN/FAIL items)
-- **Asset Node Map Dedup** - Replaced inline Step 1 parsing in both code generators with reference pointer to `asset-node-mapping.md`
-- **Frame Properties Dedup** - Replaced inline parsing in code-generator-swiftui with reference pointer to `frame-properties.md`
+- **Asset Node Map Dedup** - Both code generators now reference `asset-node-mapping.md` (consolidation done in v1.10.0, pointer standardized here)
+- **Frame Properties Dedup** - code-generator-swiftui now references `frame-properties.md` (consolidation done in v1.10.0, pointer standardized here)
 
 ## [1.14.0] - 2026-01-28
 

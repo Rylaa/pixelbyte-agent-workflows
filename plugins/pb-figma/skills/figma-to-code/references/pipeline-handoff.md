@@ -1,6 +1,6 @@
 # Pipeline Handoff Formats Reference
 
-> **Used by:** All pipeline agents
+> **Used by:** docs-index.md (not yet referenced by any agent)
 
 This document defines the exact data contract between pipeline stages. Each agent must produce output matching the next agent's expected input.
 

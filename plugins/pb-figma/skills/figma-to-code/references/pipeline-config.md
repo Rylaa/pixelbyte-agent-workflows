@@ -1,6 +1,6 @@
 # Pipeline Configuration Reference
 
-> **Used by:** all agents
+> **Used by:** docs-index.md (not yet referenced by any agent)
 
 This document defines configurable values used across the pipeline. When the skill file or user specifies overrides, agents should use those values instead of defaults.
 

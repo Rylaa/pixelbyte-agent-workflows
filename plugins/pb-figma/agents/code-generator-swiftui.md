@@ -1097,7 +1097,7 @@ After successfully generating all Views and updating the spec, write a checkpoin
 mkdir -p .qa
 ```
 
-Write to `.qa/checkpoint-4-code-generator.json`:
+Write to `.qa/checkpoint-4-code-generator-swiftui.json`:
 ```json
 {
   "phase": 4,

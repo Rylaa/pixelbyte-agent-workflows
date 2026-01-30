@@ -144,7 +144,7 @@ if checkpoints:
 | 1 complete | `checkpoint-1-design-validator.json` | Phase 2: design-analyst |
 | 2 complete | `checkpoint-2-design-analyst.json` | Phase 3: asset-manager |
 | 3 complete | `checkpoint-3-asset-manager.json` | Phase 4: code-generator |
-| 4 complete | `checkpoint-4-code-generator.json` | Phase 5: compliance-checker |
+| 4 complete | `checkpoint-4-code-generator-{framework}.json` | Phase 5: compliance-checker |
 | 5 complete | `checkpoint-5-compliance-checker.json` | Pipeline complete |
 
 **Clean start:** Delete `.qa/checkpoint-*.json` to force full pipeline re-run.
@@ -177,6 +177,8 @@ NOTE: URL format "456-789" must be used as "456:789"!
 ## References
 
 **How to load references:** Use `Glob("**/references/{filename}.md")` to find the absolute path, then `Read()` the result.
+
+> **Complete catalog:** See `docs-index.md` (`Glob("**/pb-figma/docs-index.md")`) for all 30+ references organized by category.
 
 | Topic | Reference File | Glob Pattern |
 |-------|---------------|--------------|

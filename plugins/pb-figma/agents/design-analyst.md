@@ -1336,3 +1336,24 @@ If `figma_get_file_structure` or `figma_get_node_details` returns size error:
 4. **Skip structure query:** If file is too large, proceed with node_ids from Validation Report directly
 
 **IMPORTANT:** Never try to read large MCP result files (>256KB). Use targeted queries instead.
+
+## Checkpoint Write
+
+After successfully writing the Implementation Spec, write a checkpoint file:
+
+```bash
+mkdir -p .qa
+```
+
+Write to `.qa/checkpoint-2-design-analyst.json`:
+```json
+{
+  "phase": 2,
+  "agent": "design-analyst",
+  "status": "complete",
+  "output_file": "docs/figma-reports/{file_key}-spec.md",
+  "timestamp": "{ISO-8601}"
+}
+```
+
+This enables pipeline resume from Phase 3 if later phases fail.

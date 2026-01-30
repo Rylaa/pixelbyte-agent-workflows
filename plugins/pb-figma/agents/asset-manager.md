@@ -744,3 +744,26 @@ When documenting assets, include optimization recommendations:
 - PNG: Note if WebP conversion recommended
 - Large images: Note if lazy loading recommended
 - Retina: Note if multiple resolutions needed
+
+## Checkpoint Write
+
+After successfully updating the Implementation Spec with Downloaded Assets, write a checkpoint file:
+
+```bash
+mkdir -p .qa
+```
+
+Write to `.qa/checkpoint-3-asset-manager.json`:
+```json
+{
+  "phase": 3,
+  "agent": "asset-manager",
+  "status": "complete",
+  "output_file": "docs/figma-reports/{file_key}-spec.md",
+  "assets_downloaded": "{count}",
+  "assets_failed": "{count}",
+  "timestamp": "{ISO-8601}"
+}
+```
+
+This enables pipeline resume from Phase 4 if later phases fail.

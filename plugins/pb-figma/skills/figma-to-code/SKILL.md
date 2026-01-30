@@ -53,6 +53,8 @@ Figma URL
 | -> Vue/Nuxt       -> code-generator-vue     | 🚧 Placeholder
 | -> Kotlin/Compose -> code-generator-kotlin  | 🚧 Placeholder
 +---------------------------------------------+
+| Fan-Out: >3 components → parallel batches   |
++---------------------------------------------+
     |
     v
 +-------------------------+
@@ -80,8 +82,16 @@ Task(subagent_type="pb-figma:font-manager",
      run_in_background=True)
 
 # Step 4: Code Generator (after asset-manager completes; font-manager continues in background)
+# Option A: Sequential (≤3 components or simple designs)
 Task(subagent_type="pb-figma:code-generator-{framework}",
      prompt="Generate code from spec: docs/figma-reports/{file_key}-spec.md")
+
+# Option B: Fan-Out (>3 components — significantly faster)
+# Read spec to get component list, then spawn parallel tasks:
+# for batch in chunk(components, batch_size=4):
+#     Task(subagent_type="pb-figma:code-generator-{framework}",
+#          prompt="Generate ONLY these components: {batch}. "
+#                 "Read full spec for context: docs/figma-reports/{file_key}-spec.md")
 
 # Step 5: Compliance Checker
 Task(subagent_type="pb-figma:compliance-checker",
@@ -110,6 +120,34 @@ docs/figma-reports/
 +-- {file_key}-spec.md         # Agent 2+3 output
 +-- {file_key}-final.md        # Agent 5 output
 ```
+
+## Pipeline Resume
+
+To resume a failed pipeline, check checkpoint files before starting:
+
+```python
+# Check for existing checkpoints
+checkpoints = Glob(".qa/checkpoint-*.json")
+
+if checkpoints:
+    # Find highest completed phase
+    highest = max(checkpoint.phase for checkpoint in checkpoints)
+    # Resume from next phase using existing output files
+    # Example: if highest == 2, skip design-validator and design-analyst,
+    # start from asset-manager using the spec file from checkpoint-2
+```
+
+**Checkpoint files location:** `.qa/checkpoint-{N}-{agent}.json`
+
+| Phase | Checkpoint | Resume From |
+|-------|-----------|-------------|
+| 1 complete | `checkpoint-1-design-validator.json` | Phase 2: design-analyst |
+| 2 complete | `checkpoint-2-design-analyst.json` | Phase 3: asset-manager |
+| 3 complete | `checkpoint-3-asset-manager.json` | Phase 4: code-generator |
+| 4 complete | `checkpoint-4-code-generator.json` | Phase 5: compliance-checker |
+| 5 complete | `checkpoint-5-compliance-checker.json` | Pipeline complete |
+
+**Clean start:** Delete `.qa/checkpoint-*.json` to force full pipeline re-run.
 
 ## Figma URL Parsing
 

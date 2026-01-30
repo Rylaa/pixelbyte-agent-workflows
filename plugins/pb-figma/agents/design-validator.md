@@ -547,3 +547,24 @@ If `figma_get_file_structure` returns a size error:
 4. Split queries: query each top-level frame separately
 
 For files with many nodes (>100), validate in sections rather than all at once to avoid timeouts.
+
+## Checkpoint Write
+
+After successfully writing the Validation Report, write a checkpoint file:
+
+```bash
+mkdir -p .qa
+```
+
+Write to `.qa/checkpoint-1-design-validator.json`:
+```json
+{
+  "phase": 1,
+  "agent": "design-validator",
+  "status": "complete",
+  "output_file": "docs/figma-reports/{file_key}-validation.md",
+  "timestamp": "{ISO-8601}"
+}
+```
+
+This enables pipeline resume from Phase 2 if later phases fail.

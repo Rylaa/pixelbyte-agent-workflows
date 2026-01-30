@@ -2,6 +2,21 @@
 
 All notable changes to the pb-figma plugin will be documented in this file.
 
+## [1.15.0] - 2026-01-30
+
+### Added
+- **Self-Verification Loops** - code-generator-react and code-generator-swiftui now verify their own output (TypeScript compilation, syntax validation, import resolution, spec compliance) before handing off to compliance-checker
+- **Component Subset Mode** - Code generators support "Generate ONLY these components" mode for parallel fan-out execution
+- **Component Fan-Out** - SKILL.md pipeline now supports parallel code generation when >3 components (batch size: 4)
+- **JSON Checkpoint System** - All 5 pipeline agents write `.qa/checkpoint-{N}-{agent}.json` after completion, enabling pipeline resume from last successful phase
+- **Pipeline Resume** - SKILL.md documents checkpoint-based resume for failed pipelines
+- **Checkpoint-Based Recovery** - error-recovery.md documents checkpoint file structure and recovery workflow
+
+### Changed
+- **compliance-checker Pre-Check** - Reads self-verification results from spec to skip redundant checks (focus on WARN/FAIL items)
+- **Asset Node Map Dedup** - Replaced inline Step 1 parsing in both code generators with reference pointer to `asset-node-mapping.md`
+- **Frame Properties Dedup** - Replaced inline parsing in code-generator-swiftui with reference pointer to `frame-properties.md`
+
 ## [1.14.0] - 2026-01-28
 
 ### Fixed

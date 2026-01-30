@@ -94,7 +94,20 @@ Use `TodoWrite` to track compliance verification through these steps:
 
 ## Compliance Checklist
 
-Verify all aspects of the generated code against the spec:
+Verify all aspects of the generated code against the spec.
+
+### Pre-Check: Read Self-Verification Results
+
+Before starting compliance checks, look for a "Self-Verification Results" section in the spec file:
+
+1. **Read the spec** and search for `## Self-Verification Results`
+2. **If present:** Parse the results table. For each component:
+   - Status `✅` (all PASS) → Skip detailed re-checking for that component. Only do a quick file-existence check.
+   - Status `⚠️` (has WARN) → Focus compliance checks on the WARN areas only
+   - Status `❌` (has FAIL) → Full compliance check required
+3. **If absent:** Run full compliance checks on all components (legacy behavior)
+
+This reduces redundant work when code-generators have already self-verified their output.
 
 ### 1. Component Structure
 
@@ -910,3 +923,25 @@ For large projects with many components:
 - Report progress during verification
 - Save partial results to avoid data loss
 - Resume from last successful component if interrupted
+
+## Checkpoint Write
+
+After successfully writing the Final Report, write a checkpoint file:
+
+```bash
+mkdir -p .qa
+```
+
+Write to `.qa/checkpoint-5-compliance-checker.json`:
+```json
+{
+  "phase": 5,
+  "agent": "compliance-checker",
+  "status": "complete",
+  "output_file": "docs/figma-reports/{file_key}-final.md",
+  "overall_status": "{PASS|WARN|FAIL}",
+  "timestamp": "{ISO-8601}"
+}
+```
+
+This marks the pipeline as complete.

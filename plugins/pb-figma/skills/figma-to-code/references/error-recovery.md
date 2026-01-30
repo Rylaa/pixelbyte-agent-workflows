@@ -243,6 +243,26 @@ Pipeline currently recovers by:
 
 ---
 
+## Checkpoint-Based Recovery
+
+Each pipeline agent writes a JSON checkpoint to `.qa/checkpoint-{N}-{agent}.json` upon successful completion. When recovering from errors:
+
+1. **Check existing checkpoints:** Read `.qa/checkpoint-*.json` files
+2. **Find highest completed phase:** The highest phase number indicates last successful step
+3. **Resume from next phase:** Skip already-completed phases and their agents
+4. **Use checkpoint output_file:** Read the output file path from the checkpoint to pass to the next agent
+
+**Checkpoint files:**
+| Phase | File | Agent |
+|-------|------|-------|
+| 1 | `checkpoint-1-design-validator.json` | design-validator |
+| 2 | `checkpoint-2-design-analyst.json` | design-analyst |
+| 3 | `checkpoint-3-asset-manager.json` | asset-manager |
+| 4 | `checkpoint-4-code-generator.json` | code-generator-* |
+| 5 | `checkpoint-5-compliance-checker.json` | compliance-checker |
+
+**Clean start:** Delete `.qa/checkpoint-*.json` to force full pipeline re-run.
+
 ## TodoWrite for Errors
 
 ```javascript
